@@ -11,36 +11,34 @@
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER); //controller
 
 // drivetrain
-inline pros::MotorGroup right_dt({-5,6,7}, pros::MotorGearset::blue);    // right side
-inline pros::MotorGroup left_dt({10,-9,-2}, pros::MotorGearset::blue);  // left side
+inline pros::MotorGroup right_dt({1,2,3}, pros::MotorGearset::blue);    // right side
+inline pros::MotorGroup left_dt({-4,-5,-6}, pros::MotorGearset::blue);  // left side
 
 // drivetrain config for movement functions
 // (wheel size, width, rpm, etc.)
-inline lemlib::Drivetrain drivetrain(&left_dt,
-							  &right_dt,
-							  10.25,
-							  lemlib::Omniwheel::NEW_325 * 24/23.68,
-							  450,
-							  2
+inline lemlib::Drivetrain drivetrain(&left_dt, // left mg
+                                     &right_dt, // right mg
+                                     0, // track width
+                                     0, // wheel diameter
+                                     0, // rpm
+                                     0
 );
 
-inline pros::Imu imu(3);
+inline pros::Imu imu(7);
 // declare sensors needed for odom setup
-/*inline pros::Rotation horizontalEnc(17);
-inline pros::Rotation verticalEnc(18);
-*/
+inline pros::Rotation horizontalEnc(8);
+inline pros::Rotation verticalEnc(9);
 
-inline pros::Rotation verticalEnc(-4);
 //configure tracking wheels
-//inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.2, -5);
-inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, 0);
-//inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_2 * 24/25.2, 1.5);
+inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2, 0);
+inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_2, 0);
+
 // configure entire odom setup
-inline lemlib::OdomSensors sensors(&verticalTrackingWheel,
-							nullptr,
-							nullptr,
-							nullptr,
-							&imu
+inline lemlib::OdomSensors sensors(&verticalTrackingWheel, // v1
+							nullptr, // v2
+							&horizontalTrackingWheel, // h1
+							nullptr, // h2
+							&imu // imu
 );
 
 // lateral pid
@@ -72,22 +70,12 @@ inline lemlib::ControllerSettings angular_controller(5, // proportional gain (kP
 // for drive curves explanation and interactive desmos graph
 
 // input curve for throttle input during driver control
-// inline lemlib::ExpoDriveCurve
-//     throttle_curve(3,    // joystick deadband out of 127
-//                    0,   // minimum output where drivetrain will move out of 127
-//                    1.017 // expo curve gain
-//     );
 inline lemlib::ExpoDriveCurve throttle_curve(
     3,    // deadband
     0,    // min output
     1.01  
 );
 // input curve for steer input during driver control
-// inline lemlib::ExpoDriveCurve
-//     steer_curve(60,    // joystick deadband out of 127
-//                 10,   // minimum output where drivetrain will move out of 127
-//                 1.016 // expo curve gain
-//     );
 inline lemlib::ExpoDriveCurve steer_curve(
     3,    // deadband 
     0,    // min output
@@ -106,20 +94,13 @@ inline lemlib::Chassis chassis(drivetrain, // drivetrain settings
 // declare additional motors, sensors, and pnuematics here
 
 //negative means regular direction is flipped
-// intake groups
-inline pros::Motor frontIntake(16, pros::MotorGearset::blue);
-inline pros::Motor middleRollers(-12);
-inline pros::Motor colorSortRoller(15);
-inline pros::Motor scoringRoller(-15);
+// MOTORS //
 
-// extensions
-// false means open and true means close - only for scoring
-inline pros::adi::DigitalOut scoringGate('A');
-inline pros::adi::DigitalOut loaderMech('B');
-inline pros::adi::DigitalOut wingMech('C');
-inline pros::adi::DigitalOut parkMech('D');
-inline pros::adi::DigitalOut pistake('E');
-inline pros::adi::DigitalOut descoreMech('F');
+// subsystem 1
+pros::Motor motor1(10, pros::MotorGearset::blue);
+
+// PNEUMMATICS //
+inline pros::adi::DigitalOut piston('A');
 
 
 

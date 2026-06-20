@@ -75,17 +75,10 @@ void opcontrol(void);
  * You can add C++-only headers here
  */
 #include <iostream>
-#include "setup.hpp"
-#include "op_control.hpp"
-#include "awp.hpp"
-#include "blockScoring.hpp"
-#include "distanceSensor.hpp"
-#include "midGoalScoring.hpp"
-#include "oneGoal.hpp"
-#include "pidTesting.hpp"
-#include "skills.hpp"
-#include "testRoute.hpp"
-#include "twoGoal.hpp"
+#include "eternity_template\setup.hpp"
+#include "eternity_template\op_control\op_control.hpp"
+#include "eternity_template\auton\autons.hpp"
+#include "eternity_template\util\util.hpp"
 
 #endif
 
