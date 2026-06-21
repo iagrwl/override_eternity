@@ -41,6 +41,7 @@
  */
 //#include "okapi/api.hpp"
 
+
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
  * Motor, you can use the namespace with the following commented out line.
@@ -74,6 +75,7 @@ void opcontrol(void);
 /**
  * You can add C++-only headers here
  */
+#include <fstream>
 #include <iostream>
 #include "eternity_template\setup.hpp"
 #include "eternity_template\op_control\op_control.hpp"

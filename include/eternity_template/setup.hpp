@@ -97,7 +97,7 @@ inline lemlib::Chassis chassis(drivetrain, // drivetrain settings
 // MOTORS //
 
 // subsystem 1
-pros::Motor motor1(10, pros::MotorGearset::blue);
+inline pros::Motor motor1(10, pros::MotorGearset::blue);
 
 // PNEUMMATICS //
 inline pros::adi::DigitalOut piston('A');

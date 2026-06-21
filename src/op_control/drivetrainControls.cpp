@@ -1,6 +1,23 @@
 #include "main.h"
 
 // drive mode handler
+void handleDriveCommands() {
+  bool defaultDrive;
+  int DHoldTime;
+  if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+            DHoldTime += 10; 
+            if (DHoldTime >= 2000) { // how long the button has to be held to activate
+                defaultDrive = !defaultDrive;
+                controller.rumble(".."); 
+                DHoldTime = 0; 
+            }
+        } else {
+            DHoldTime = 0; 
+        }
+
+        handleDriveMode(defaultDrive);
+}
+
 void handleDriveMode(bool driveMode) {
   driveMode ? handleArcade() : handleTank();
 }
