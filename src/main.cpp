@@ -1,26 +1,9 @@
 #include "main.h"
 #include "robodash/api.h"
 
-bool tuneMode = false; // set true for green screen set false for competition
-
-enum Route { // add more routes as we make them
-  AWP,
-  SKILLS
-};
-Route testRoute = AWP;
-
 //tasks
 
 // only runs when tuneMode true
-void positionTrackerTask() {
-    while (true) {
-    pros::lcd::print(1, "X: %.2f, Y: %.2f, Theta: %.2f",
-                         chassis.getPose().x, 
-                         chassis.getPose().y, 
-                         chassis.getPose().theta);
-    pros::delay(10);
-    }
-}
 
 void wallTask(void* param) {
   while (true) {
@@ -28,7 +11,6 @@ void wallTask(void* param) {
     pros::delay(10);
   }
 }
-
 
 void telemetryFunc(void* param) {
   while (true) {
@@ -41,15 +23,23 @@ rd::Selector selector({
   {"solo AWP", &soloAWP},
 });
 
+rd::Console console;
+
+void positionTracker() {
+    while (true) {
+      console.printf("X: %.2f\n", chassis.getPose().x);
+      console.printf("Y: %.2f\n", chassis.getPose().y);
+      console.printf("Theta: %.2f\n", chassis.getPose().theta);
+
+      pros::delay(20);
+    }
+}
+
 void initialize() {
     selector.focus();
 
     // define + run tasks here
-    if (tuneMode == true){
-        chassis.setPose(0, 0, 0);
-        pros::lcd::initialize();
-        pros::Task pos(&positionTrackerTask);
-    }
+    pros::Task pos(&positionTracker);
 
     //pros::Task telemetryTask(telemetry);
     // set default values here
@@ -83,17 +73,7 @@ void competition_initialize() {
 }
 
 void autonomous() {
-  if (tuneMode){
-    switch (testRoute) {
-    case AWP:
-      soloAWP();
-      break;
-    case SKILLS:
-      break;
-    }
-  } else{
     selector.run_auton();
-  }
  }
 
 
