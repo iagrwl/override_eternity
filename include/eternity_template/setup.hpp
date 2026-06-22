@@ -97,15 +97,15 @@ inline lemlib::Chassis chassis(drivetrain, // drivetrain settings
 // MOTORS //
 
 // subsystem 1
-inline pros::Motor motor1(10, pros::MotorGearset::blue);
-
+inline pros::MotorGroup cascade({-4, 5});
+inline pros::Motor arm({-6}, pros::MotorGearset::green);
 // PNEUMMATICS //
 inline pros::adi::DigitalOut piston('A');
 
 
 
 // vision sensors
-//inline pros::Vision vision(14);
+inline pros::Vision vision(14);
 inline pros::Optical topOptical(14);
 inline pros::Distance bottomDistance(15);
 inline pros::Distance leftDistance(20);

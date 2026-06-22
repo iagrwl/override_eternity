@@ -1,9 +1,9 @@
 #include "main.h"
 #include "robodash/api.h"
-
+#include "eternity_template/op_control/lift.hpp"
+#include "eternity_template/op_control/arm.hpp"
 //tasks
 
-// only runs when tuneMode true
 
 void wallTask(void* param) {
   while (true) {
@@ -45,7 +45,11 @@ void initialize() {
     // set default values here
 
     // drivetrain calibration
-    chassis.calibrate();
+    // chassis.calibrate();
+    cascade.tare_position();
+    printf("cascade zeroed\n");
+    arm.set_brake_mode(pros::MotorBrake::hold);
+    cascade.set_brake_mode(pros::MotorBrake::hold);
     left_dt.set_brake_mode(pros::MotorBrake::coast);
     right_dt.set_brake_mode(pros::MotorBrake::coast);
 
@@ -79,9 +83,11 @@ void autonomous() {
 
 void opcontrol() {
   while (true) {
-    // driver control functions go here
-    handleDriveCommands();
 
+    handleDriveCommands();
+    //manualCascade();
+    autoCascade();
+    manualArm();
     // 20 ms delay to avoid strain on the brain
 	pros::delay(20);
 	}
