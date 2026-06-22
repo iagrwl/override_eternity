@@ -1,6 +1,6 @@
-<h1 style="font-size: 100px;">Eternity Pushback Great Planes Repository</h1>
+<h1 style="font-size: 100px;">Eternity Override Repository</h1>
 
-### This reposoitory contains code for team 42824A Eternity's Great Planes Robot, below are instructions to get this code onto your computer:
+### This reposoitory contains code for team 42824A Eternity's Override Season, below are instructions to get this code onto your computer:
 
 ## **Project Setup Guide**
 
@@ -28,8 +28,9 @@ cd ***-insert your copied path here-***
 ### Clone the repo
 Enter the following commands into your terminal:
 
-git clone https://github.com/iagrwl/pushbackGreatPlanes.git
-cd pushbackGreatPlanes
+git clone https://github.com/iagrwl/override_eternity.git Override
+
+cd Override
 
 ## 2. Open in VS Code
 
@@ -66,5 +67,6 @@ You're now ready to run and test this code locally and on your robot.
 Watch this [slightly passive agressive video](https://www.youtube.com/watch?v=mJ-qvsxPHpY&t=870s&ab_channel=NickWhite).
 
 This will also teach you how to push your changes onto this repo!
+
 
 
