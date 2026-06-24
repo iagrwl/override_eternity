@@ -1,6 +1,6 @@
-<h1 style="font-size: 100px;">Eternity Pushback Great Planes Repository</h1>
+<h1 style="font-size: 100px;">eternity repo clone directions</h1>
 
-### This reposoitory contains code for team 42824A Eternity's Great Planes Robot, below are instructions to get this code onto your computer:
+### This reposoitory contains code for team 42824A Eternity's Robot, below are instructions to get this code onto your computer:
 
 ## **Project Setup Guide**
 
@@ -37,34 +37,10 @@ cd pushbackGreatPlanes
   2. Go to File > Open Folder.
   3. Select the folder you just cloned.
 
-### Note: Next two steps are optional, they help things run more smoothly
-
-## 3. (OPTIONAL) Rebuild IntelliSense Index
-  1. Make sure you’ve opened the entire project folder in VS Code (File > Open Folder, not just individual files).
-  2. Open the Command Palette (Ctrl+Shift+P).
-  3. Type in PROS: Rebuild IntelliSense Index.
-  4. If you see PROS: Rebuild IntelliSense Index, select it and wait for it to finish.
-  5. If you ***don’t see*** that option:
-     - Make sure the PROS VS Code extension is installed.
-     - Alternatively, close and reopen VS Code.
-  6. You can also run this from the terminal:
-     - pros conduct intellisense
-
-Restart VS Code once you've completed these steps.
-
-## 4. (OPTIONAL) Clean the Project
-Type this command in your PROS terminal (within VSC):
-pros make clean
-
-This removes any old compiled files and ensures a clean build.
+d compiled files and ensures a clean build.
 
 # Done!
 
-You're now ready to run and test this code locally and on your robot.
 
-# Still need help?
-Watch this [slightly passive agressive video](https://www.youtube.com/watch?v=mJ-qvsxPHpY&t=870s&ab_channel=NickWhite).
-
-This will also teach you how to push your changes onto this repo!
 
 
