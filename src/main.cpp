@@ -84,10 +84,16 @@ void autonomous() {
 void opcontrol() {
   while (true) {
 
-    handleDriveCommands();
+    handleArcade();
+
+
+    
     //manualCascade();
     autoCascade();
     manualArm();
+    //autoArm();
+
+
     // 20 ms delay to avoid strain on the brain
 	pros::delay(20);
 	}

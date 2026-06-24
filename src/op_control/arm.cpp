@@ -18,57 +18,58 @@ void manualArm() {
     }
 }
 
-void autoArm() {
-    // 1. Update the target position
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-        if (currentArmPosition < 3) currentArmPosition++;
+//usage: 
+// moves to preset 2 autoArm(2); 
+// moves to set degree autoArm(-1, 4000); 
+
+void autoArm(int presetIndex = -1, int customDegree = -1) {
+    if (customDegree != -1) {
+        targetArmPosition = customDegree;
+    } 
+    else if (presetIndex >= 0 && presetIndex <= 3) {
+        currentArmPosition = presetIndex;
         targetArmPosition = ArmPositions[currentArmPosition];
-        printf("\n MOVING UP TO PRESET %d \n", currentArmPosition);
-    }
-    else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-        if (currentArmPosition > 0) currentArmPosition--;
-        targetArmPosition = ArmPositions[currentArmPosition];
-        printf("\n MOVING DOWN TO PRESET %d <\n", currentArmPosition);
+    } 
+    else {
+
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+            if (currentArmPosition < 3) currentArmPosition++;
+            targetArmPosition = ArmPositions[currentArmPosition];
+            printf("\n movin to %d \n", currentArmPosition);
+        }
+        else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+            if (currentArmPosition > 0) currentArmPosition--;
+            targetArmPosition = ArmPositions[currentArmPosition];
+            printf("\n moving to %d <\n", currentArmPosition);
+        }
     }
 
-    // 2. The Tuned PD Controller (P + D + Gravity Hold)
+
     double currentPos = arm.get_position();
     double error = targetArmPosition - currentPos; 
     
-    // Track how fast the error is changing for the D term
     static double prevError = 0;
     double derivative = error - prevError;
-    prevError = error; // Save current error for the next loop
+    prevError = error; 
 
-    // Dropped kP so it stops overshooting
     double kP = 0.20; 
-    // kD acts as a brake to fight momentum and kill oscillations
     double kD = 0.80; 
-
-    // Calculate base power
     double power = (error * kP) + (derivative * kD);
 
-    // --- SMOOTH GRAVITY HOLD ---
-    // Instead of violently switching based on error, just apply a constant 
-    // gentle upward force to hold the weight ONLY if we aren't at the bottom.
     if (targetArmPosition > 0) {
         power += 30; 
     }
-
-    // Cap the power so it never exceeds VEX limits
     if (power > 127) power = 127;
     if (power < -127) power = -127;
 
-    // 3. Telemetry Print
     static int printTimer = 0;
     if (std::abs(error) >= 20) {
         if (printTimer % 10 == 0) { 
-            printf("Target: %d | Actual: %.1f | Power: %.1f\n", targetArmPosition, currentPos, power);
+            printf("target: %d  actual: %.1f  power: %.1f\n", targetArmPosition, currentPos, power);
         }
         printTimer++;
     }
 
-    // 4. Motor Execution
     if (std::abs(error) < 20) {
         arm.brake();
     } else {
