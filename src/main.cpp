@@ -88,9 +88,9 @@ void opcontrol() {
 
 
     
-    //manualCascade();
-    autoCascade();
-    manualArm();
+    manualCascade();
+    //autoCascade();
+    //manualArm();
     //autoArm();
 
 
