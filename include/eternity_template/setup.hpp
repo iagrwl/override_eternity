@@ -2,9 +2,11 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
-#include "pros/adi.hpp"
-#include "pros/distance.hpp"
-#include "pros/motors.hpp"
+#include "robodash/api.h"
+
+extern rd::Console console;
+extern rd::Selector selector;
+
 
 
 // controller
@@ -18,9 +20,9 @@ inline pros::MotorGroup left_dt({20,14,-13}, pros::MotorGearset::blue);  // left
 // (wheel size, width, rpm, etc.)
 inline lemlib::Drivetrain drivetrain(&left_dt, // left mg
                                      &right_dt, // right mg
-                                     0, // track width
-                                     0, // wheel diameter
-                                     0, // rpm
+                                     11, // track width
+                                     3.25, // wheel diameter
+                                     360, // rpm
                                      0
 );
 
@@ -96,9 +98,11 @@ inline lemlib::Chassis chassis(drivetrain, // drivetrain settings
 //negative means regular direction is flipped
 // MOTORS //
 
-// subsystem 1
-inline pros::MotorGroup cascade({-4, 5});
+// lift
+inline pros::MotorGroup lift({4, -5}, pros::MotorGearset::red);
 inline pros::Motor arm({-6}, pros::MotorGearset::green);
+inline pros::Rotation liftRotation(-9);
+
 // PNEUMMATICS //
 inline pros::adi::DigitalOut piston('A');
 

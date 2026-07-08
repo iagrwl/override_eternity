@@ -27,9 +27,9 @@ rd::Console console;
 
 void positionTracker() {
     while (true) {
-      console.printf("X: %.2f\n", chassis.getPose().x);
-      console.printf("Y: %.2f\n", chassis.getPose().y);
-      console.printf("Theta: %.2f\n", chassis.getPose().theta);
+      // console.printf("X: %.2f\n", chassis.getPose().x);
+      // console.printf("Y: %.2f\n", chassis.getPose().y);
+      // console.printf("Theta: %.2f\n", chassis.getPose().theta);
 
       pros::delay(20);
     }
@@ -39,19 +39,21 @@ void initialize() {
     selector.focus();
 
     // define + run tasks here
-    pros::Task pos(&positionTracker);
+    // pros::Task pos(&positionTracker);
+    pros::Task liftTask(liftPID);
 
     //pros::Task telemetryTask(telemetry);
     // set default values here
 
     // drivetrain calibration
     // chassis.calibrate();
-    cascade.tare_position();
-    printf("cascade zeroed\n");
+    lift.tare_position();
+    liftRotation.set_position(0);
+    console.printf("lift zeroed\n");
     arm.set_brake_mode(pros::MotorBrake::hold);
-    cascade.set_brake_mode(pros::MotorBrake::hold);
-    left_dt.set_brake_mode(pros::MotorBrake::coast);
-    right_dt.set_brake_mode(pros::MotorBrake::coast);
+    lift.set_brake_mode_all(pros::MotorBrake::hold);
+    left_dt.set_brake_mode_all(pros::MotorBrake::coast);
+    right_dt.set_brake_mode_all(pros::MotorBrake::coast);
 
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
@@ -88,7 +90,8 @@ void opcontrol() {
 
 
     
-    manualCascade();
+    // manualCascade();
+    liftMacro();
     //autoCascade();
     //manualArm();
     //autoArm();

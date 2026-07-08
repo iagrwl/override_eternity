@@ -5,16 +5,50 @@ int cascadePositions[] = {0, 550, 5800, 9650};
 int currentCascadePosition = 0; 
 int targetPosition = 0;
 
+int liftPos[] = {0, 8400};
+int targetPosIndex = 0;
+int liftTarget = 0;
+
+lemlib::PID liftController(0.08,
+                    0,
+                    0.05,
+                    0,
+                    true   
+                    );
+
+void liftPID(void*) {
+    while (true) {
+        int current = liftRotation.get_position();
+        int error = liftTarget - current;
+        double output = liftController.update(error);
+
+        console.printf("Pos: %d, Err: %d, Out: %d\n", current, error, output);
+
+
+        lift.move(output);
+
+        pros::delay(20);
+    }
+}
+void liftMacro() {
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        targetPosIndex = targetPosIndex == 0 ? 1 : 0;
+        liftTarget = liftPos[targetPosIndex];
+
+        liftController.reset();
+    }
+}
+
 void manualCascade() {
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        cascade.move(127); 
+        lift.move(127); 
     } 
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-        cascade.move(-127); 
+        lift.move(-127); 
     } 
     else {
-        cascade.brake();    
-        printf("Cascade Position: %.1f\n", cascade.get_position());
+        lift.brake();    
+        printf("Cascade Position: %.1f\n", lift.get_position());
     }
 }
 
@@ -44,7 +78,7 @@ void autoCascade(int presetIndex, int customDegree) {
         }
     }
 
-    double currentPos = cascade.get_position();
+    double currentPos = lift.get_position();
     double error = targetPosition - currentPos; 
     
     static double prevError = 0;
@@ -70,8 +104,8 @@ void autoCascade(int presetIndex, int customDegree) {
     }
 
     if (std::abs(error) < 20) {
-        cascade.brake();
+        lift.brake();
     } else {
-        cascade.move(power); 
+        lift.move(power); 
     }
 }
