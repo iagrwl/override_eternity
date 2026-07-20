@@ -9,6 +9,8 @@ int liftPos[] = {0, 8400};
 int targetPosIndex = 0;
 int liftTarget = 0;
 
+bool isClawOpen = true;
+
 lemlib::PID liftController(0.08,
                     0,
                     0.05,
@@ -55,17 +57,15 @@ void manualCascade() {
     }
 }
 
-void claw(){
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-        if (clawPosition == 0) {
-            clawMotor.move(127);
-            clawPosition = 1;
-        } else if(clawPosition == 1) {
-            clawMotor.move(-127);
-            clawPosition = 0;
-        }
+void toggleClaw() {
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+        int i = isClawOpen ? 1 : -1;
+        isClawOpen = !isClawOpen;
+        
+        clawMotor.move(127 * i);
+        pros::delay(2000);
+        clawMotor.move(0);
     }
-    
 }
 
 void manualIntake() {

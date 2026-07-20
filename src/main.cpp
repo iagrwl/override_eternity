@@ -91,7 +91,7 @@ void opcontrol() {
     handleArcade();
 
 
-    claw();
+    toggleClaw();
     manualCascade();
     //liftMacro();
     manualIntake();
@@ -102,6 +102,6 @@ void opcontrol() {
 
 
     // 20 ms delay to avoid strain on the brain
-	pros::delay(20);
+	  pros::delay(20);
 	}
 }
