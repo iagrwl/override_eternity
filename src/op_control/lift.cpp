@@ -36,7 +36,10 @@ void liftMacro() {
         liftTarget = liftPos[targetPosIndex];
 
         liftController.reset();
+
     }
+
+    
 }
 
 void manualCascade() {
@@ -52,6 +55,30 @@ void manualCascade() {
     }
 }
 
+void claw(){
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        if (clawPosition == 0) {
+            clawMotor.move(127);
+            clawPosition = 1;
+        } else if(clawPosition == 1) {
+            clawMotor.move(-127);
+            clawPosition = 0;
+        }
+    }
+    
+}
+
+void manualIntake() {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+        firstStage.move(127);
+        secondStage.move(-127);
+    }
+    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+        firstStage.move(0);
+        secondStage.move(0);
+    }
+    
+}
 //usage: 
 // moves to preset 2 autoCascade(2); 
 // moves to set degree autoCascade(-1, 4000); 

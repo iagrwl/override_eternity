@@ -26,7 +26,7 @@ inline lemlib::Drivetrain drivetrain(&left_dt, // left mg
                                      0
 );
 
-inline pros::Imu imu(7);
+inline pros::Imu imu(1);
 // declare sensors needed for odom setup
 inline pros::Rotation horizontalEnc(8);
 inline pros::Rotation verticalEnc(9);
@@ -99,9 +99,16 @@ inline lemlib::Chassis chassis(drivetrain, // drivetrain settings
 // MOTORS //
 
 // lift
-inline pros::MotorGroup lift({4, -5}, pros::MotorGearset::red);
+inline pros::MotorGroup lift({21, -14}, pros::MotorGearset::red);
 inline pros::Motor arm({-6}, pros::MotorGearset::green);
-inline pros::Rotation liftRotation(-9);
+inline pros::Rotation liftRotation(-18);
+
+// intake
+inline pros::Motor firstStage({13}, pros::MotorGearset::blue);
+inline pros::Motor secondStage({4}, pros::MotorGearset::green);
+
+// claw
+inline pros::Motor clawMotor({19}, pros::MotorGearset::green);
 
 // PNEUMMATICS //
 inline pros::adi::DigitalOut piston('A');

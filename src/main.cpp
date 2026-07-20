@@ -2,6 +2,7 @@
 #include "robodash/api.h"
 #include "eternity_template/op_control/lift.hpp"
 #include "eternity_template/op_control/arm.hpp"
+
 //tasks
 
 
@@ -84,14 +85,17 @@ void autonomous() {
 
 
 void opcontrol() {
+  //clawPosition = 0;
   while (true) {
 
     handleArcade();
 
 
-    
-    // manualCascade();
-    liftMacro();
+    claw();
+    manualCascade();
+    //liftMacro();
+    manualIntake();
+  
     //autoCascade();
     //manualArm();
     //autoArm();
