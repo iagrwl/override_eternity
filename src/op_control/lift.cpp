@@ -10,6 +10,7 @@ int targetPosIndex = 0;
 int liftTarget = 0;
 
 bool isClawOpen = true;
+int clawTimer = 0;
 
 lemlib::PID liftController(0.08,
                     0,
@@ -61,9 +62,13 @@ void toggleClaw() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
         int i = isClawOpen ? 1 : -1;
         isClawOpen = !isClawOpen;
-        
+
         clawMotor.move(127 * i);
-        pros::delay(2000);
+        clawTimer = 0;
+    }
+    clawTimer += 20;
+
+    if (clawTimer > 750 && clawMotor.get_actual_velocity() > 10) {
         clawMotor.move(0);
     }
 }
