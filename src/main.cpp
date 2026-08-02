@@ -3,8 +3,33 @@
 #include "eternity_template/op_control/lift.hpp"
 #include "eternity_template/op_control/arm.hpp"
 
-//tasks
+void calibrate() {
+    lift.move(-127);
+    pros::delay(100);
+    while (lift.get_actual_velocity() > 5) {
+        pros::delay(10);
+    }
+    lift.move(0);
 
+    lift.tare_position();
+    liftRotation.set_position(0);
+    lift.set_brake_mode_all(pros::MotorBrake::hold);
+
+    clawMotor.move(127);
+    pros::delay(100);
+    while (clawMotor.get_actual_velocity() > 5) {
+        pros::delay(10);
+    }
+    clawMotor.move(0);
+    
+    clawMotor.tare_position();
+    clawMotor.set_brake_mode(pros::MotorBrake::hold);
+
+    left_dt.set_brake_mode_all(pros::MotorBrake::coast);
+    right_dt.set_brake_mode_all(pros::MotorBrake::coast);
+}
+
+//tasks
 
 void wallTask(void* param) {
   while (true) {
@@ -48,13 +73,7 @@ void initialize() {
 
     // drivetrain calibration
     // chassis.calibrate();
-    lift.tare_position();
-    liftRotation.set_position(0);
-    console.printf("lift zeroed\n");
-    arm.set_brake_mode(pros::MotorBrake::hold);
-    lift.set_brake_mode_all(pros::MotorBrake::hold);
-    left_dt.set_brake_mode_all(pros::MotorBrake::coast);
-    right_dt.set_brake_mode_all(pros::MotorBrake::coast);
+    calibrate();
 
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {

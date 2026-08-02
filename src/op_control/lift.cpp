@@ -9,15 +9,28 @@ int liftPos[] = {0, 8400};
 int targetPosIndex = 0;
 int liftTarget = 0;
 
+int clawPos[] = {0, 65};
+int clawTargetPosIndex = 0;
+int clawTarget = 0;
+
 bool isClawOpen = true;
 int clawTimer = 0;
 
-lemlib::PID liftController(0.08,
-                    0,
-                    0.05,
-                    0,
-                    true   
-                    );
+lemlib::PID liftController(
+                            0.08,
+                            0,
+                            0.05,
+                            0,
+                            true   
+                           );
+
+lemlib::PID clawController(
+                            1,
+                            0,
+                            0.05,
+                            0,
+                            true
+                           );
 
 void liftPID(void*) {
     while (true) {
@@ -29,6 +42,21 @@ void liftPID(void*) {
 
 
         lift.move(output);
+
+        pros::delay(20);
+    }
+}
+
+void clawPID(void*) {
+    while (true) {
+        int current = clawMotor.get_position();
+        int error = clawTarget - current;
+        double output = liftController.update(error);
+
+        console.printf("Pos: %d, Err: %d, Out: %d\n", current, error, output);
+
+
+        clawMotor.move(output);
 
         pros::delay(20);
     }
@@ -47,20 +75,24 @@ void liftMacro() {
 
 void manualCascade() {
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        lift.move(127); 
+        lift.set_brake_mode_all(pros::MotorBrake::hold);
+        // if(liftRotation.get_position() < 8400) lift.move(127); rotation sensor is temporarily off on new lift
+        lift.move(127);
     } 
-    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-        lift.move(-127); 
+    else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
+        lift.set_brake_mode_all(pros::MotorBrake::coast);
+        lift.move_relative(-200, -127);
     } 
     else {
         lift.brake();    
         printf("Cascade Position: %.1f\n", lift.get_position());
     }
 }
-
+int i;
 void toggleClaw() {
+  
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-        int i = isClawOpen ? 1 : -1;
+        i = isClawOpen ? 1 : -1;
         isClawOpen = !isClawOpen;
 
         clawMotor.move(127 * i);
@@ -68,8 +100,10 @@ void toggleClaw() {
     }
     clawTimer += 20;
 
-    if (clawTimer > 750 && clawMotor.get_actual_velocity() > 10) {
-        clawMotor.move(0);
+    if (clawTimer > 250) {
+        if (i == -1) clawMotor.move(20 * i);
+        if (i == 1) clawMotor.move(60 * i);
+        
     }
 }
 
