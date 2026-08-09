@@ -99,7 +99,7 @@ inline lemlib::Chassis chassis(drivetrain, // drivetrain settings
 // MOTORS //
 
 // lift
-inline pros::MotorGroup lift({21, -14}, pros::MotorGearset::red);
+inline pros::MotorGroup lift({-21, 14}, pros::MotorGearset::green);
 inline pros::Motor arm({-6}, pros::MotorGearset::green);
 inline pros::Rotation liftRotation(-18);
 

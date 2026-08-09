@@ -84,7 +84,7 @@ void manualCascade() {
         lift.move_relative(-200, -127);
     } 
     else {
-        lift.brake();    
+            
         printf("Cascade Position: %.1f\n", lift.get_position());
     }
 }

@@ -66,14 +66,14 @@ void initialize() {
 
     // define + run tasks here
     // pros::Task pos(&positionTracker);
-    pros::Task liftTask(liftPID);
+    // pros::Task liftTask(liftPID);
 
     //pros::Task telemetryTask(telemetry);
     // set default values here
 
     // drivetrain calibration
     // chassis.calibrate();
-    calibrate();
+    // calibrate();
 
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
