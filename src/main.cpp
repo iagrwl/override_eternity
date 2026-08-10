@@ -1,29 +1,21 @@
 #include "main.h"
 #include "robodash/api.h"
 #include "eternity_template/op_control/lift.hpp"
-#include "eternity_template/op_control/arm.hpp"
+#include "eternity_template/op_control/claw.hpp"
+#include "eternity_template/op_control/intake.hpp"
 
 void calibrate() {
-    lift.move(-127);
-    pros::delay(100);
-    while (lift.get_actual_velocity() > 5) {
-        pros::delay(10);
-    }
-    lift.move(0);
-
-    lift.tare_position();
-    liftRotation.set_position(0);
     lift.set_brake_mode_all(pros::MotorBrake::hold);
 
-    clawMotor.move(127);
+    clawPivot.move(127);
     pros::delay(100);
-    while (clawMotor.get_actual_velocity() > 5) {
+    while (clawPivot.get_actual_velocity() > 5) {
         pros::delay(10);
     }
-    clawMotor.move(0);
+    clawPivot.move(0);
     
-    clawMotor.tare_position();
-    clawMotor.set_brake_mode(pros::MotorBrake::hold);
+    clawPivot.tare_position();
+    clawPivot.set_brake_mode(pros::MotorBrake::hold);
 
     left_dt.set_brake_mode_all(pros::MotorBrake::coast);
     right_dt.set_brake_mode_all(pros::MotorBrake::coast);
@@ -67,6 +59,7 @@ void initialize() {
     // define + run tasks here
     // pros::Task pos(&positionTracker);
     // pros::Task liftTask(liftPID);
+    pros::Task clawTask(clawPID);
 
     //pros::Task telemetryTask(telemetry);
     // set default values here
@@ -110,15 +103,9 @@ void opcontrol() {
     handleArcade();
 
 
-    toggleClaw();
-    manualCascade();
-    //liftMacro();
+    pivotClaw();
+    liftControl();
     manualIntake();
-  
-    //autoCascade();
-    //manualArm();
-    //autoArm();
-
 
     // 20 ms delay to avoid strain on the brain
 	  pros::delay(20);

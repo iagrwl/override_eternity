@@ -105,10 +105,10 @@ inline pros::Rotation liftRotation(-18);
 
 // intake
 inline pros::Motor firstStage({13}, pros::MotorGearset::blue);
-inline pros::Motor secondStage({4}, pros::MotorGearset::green);
+inline pros::Motor clawIntake({4}, pros::MotorGearset::green);
 
 // claw
-inline pros::Motor clawMotor({19}, pros::MotorGearset::green);
+inline pros::Motor clawPivot({19}, pros::MotorGearset::green);
 
 // PNEUMMATICS //
 inline pros::adi::DigitalOut piston('A');
