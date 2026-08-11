@@ -1,13 +1,22 @@
 #include "main.h"
-#include "eternity_template/op_control/intake.hpp"
+
+// one shared state so the A-button toggle and any macros drive the intake through one place
+IntakeState intakeState = IntakeState::OFF;
 
 void manualIntake() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-        firstStage.move(127);
-        clawIntake.move(-127);
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+        intakeState = (intakeState == IntakeState::IN) ? IntakeState::OFF : IntakeState::IN;
     }
-    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-        firstStage.move(0);
-        clawIntake.move(0);
-    }
+}
+
+void setIntakeState(IntakeState state) {
+    intakeState = state;
+}
+
+void applyIntakeState() {
+    int power = (intakeState == IntakeState::IN) ? 127
+              : (intakeState == IntakeState::OUT) ? -127
+              : 0;
+    clawIntake.move(power);
+    firstStage.move(power);
 }

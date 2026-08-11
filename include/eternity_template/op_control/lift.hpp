@@ -1,3 +1,4 @@
 #pragma once
+
 void liftControl();
-void manualCascade();
+void resetLiftDown();

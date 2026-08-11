@@ -1,41 +1,5 @@
 #include "main.h"
 #include "robodash/api.h"
-#include "eternity_template/op_control/lift.hpp"
-#include "eternity_template/op_control/claw.hpp"
-#include "eternity_template/op_control/intake.hpp"
-
-void calibrate() {
-    lift.set_brake_mode_all(pros::MotorBrake::hold);
-
-    clawPivot.move(127);
-    pros::delay(100);
-    while (clawPivot.get_actual_velocity() > 5) {
-        pros::delay(10);
-    }
-    clawPivot.move(0);
-    
-    clawPivot.tare_position();
-    clawPivot.set_brake_mode(pros::MotorBrake::hold);
-
-    left_dt.set_brake_mode_all(pros::MotorBrake::coast);
-    right_dt.set_brake_mode_all(pros::MotorBrake::coast);
-}
-
-//tasks
-
-void wallTask(void* param) {
-  while (true) {
-    wallDistance(true, true);
-    pros::delay(10);
-  }
-}
-
-void telemetryFunc(void* param) {
-  while (true) {
-    telemetry();
-    pros::delay(12);
-  }
-}
 
 rd::Selector selector({
   {"solo AWP", &soloAWP},
@@ -43,71 +7,44 @@ rd::Selector selector({
 
 rd::Console console;
 
-void positionTracker() {
-    while (true) {
-      // console.printf("X: %.2f\n", chassis.getPose().x);
-      // console.printf("Y: %.2f\n", chassis.getPose().y);
-      // console.printf("Theta: %.2f\n", chassis.getPose().theta);
-
-      pros::delay(20);
-    }
-}
-
 void initialize() {
     selector.focus();
 
-    // define + run tasks here
-    // pros::Task pos(&positionTracker);
-    // pros::Task liftTask(liftPID);
-    pros::Task clawTask(clawPID);
+    initFlipper();
+    resetLiftDown();
 
-    //pros::Task telemetryTask(telemetry);
-    // set default values here
-
-    // drivetrain calibration
     // chassis.calibrate();
-    // calibrate();
-
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
         if (routine == std::nullopt) {
-            std::cout << "No routine selected" << std::endl;
-        controller.print(2, 0, "select route");
-
+            controller.print(2, 0, "select route");
         } else {
-            std::cout << "Selected Routine: " << routine.value().name << std::endl;
-        controller.print(2, 0, "run: %s", routine.value().name.c_str());
-
+            controller.print(2, 0, "run: %s", routine.value().name.c_str());
         }
     });
-    
-} 
-
-void disabled() {
-    
 }
 
+void disabled() {}
+
 void competition_initialize() {
-  selector.focus();
+    selector.focus();
 }
 
 void autonomous() {
     selector.run_auton();
- }
-
+}
 
 void opcontrol() {
-  //clawPosition = 0;
-  while (true) {
+    while (true) {
+        handleArcade();
 
-    handleArcade();
+        flipperButtons();
+        scoringMacro();
+        liftControl();
 
+        manualIntake();
+        applyIntakeState();
 
-    pivotClaw();
-    liftControl();
-    manualIntake();
-
-    // 20 ms delay to avoid strain on the brain
-	  pros::delay(20);
-	}
+        pros::delay(20);
+    }
 }
