@@ -11,7 +11,7 @@ void initialize() {
     selector.focus();
 
     initFlipper();
-    resetLiftDown();
+    initLift();
 
     // chassis.calibrate();
 

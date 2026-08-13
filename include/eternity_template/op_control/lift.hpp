@@ -1,4 +1,5 @@
 #pragma once
 
 void liftControl();
-void resetLiftDown();
+void initLift();
+void liftPos(double degree);

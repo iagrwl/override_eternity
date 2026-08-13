@@ -1,13 +1,33 @@
 #include "main.h"
 
-// no rotation sensor on this dr4b, so just drive down for a full second to guarantee it bottoms out
-void resetLiftDown() {
+
+constexpr int liftVelocity = 100; 
+
+
+void initLift() {
     lift.set_brake_mode_all(pros::MotorBrake::hold);
-    lift.move(-127);
-    pros::delay(1000);
+    lift.move(-100); 
+    pros::delay(200); 
+    
+    double lastPos = -999;
+    while (true) {
+        double currentPos = lift.get_position(); 
+        if (std::abs(currentPos - lastPos) < 2.0) {
+            break; 
+        }
+        lastPos = currentPos;
+        pros::delay(50);
+    }
+    
     lift.brake();
     lift.tare_position();
 }
+
+
+void liftPos(double degree) {
+    lift.move_absolute(degree, liftVelocity);
+}
+
 
 void liftControl() {
     static int currentPower = 0;
