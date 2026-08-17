@@ -2,7 +2,7 @@
 #include "robodash/api.h"
 
 rd::Selector selector({
-  {"solo AWP", &soloAWP},
+  {"solo AWP", &soloAWP}
 });
 
 rd::Console console;
@@ -13,7 +13,7 @@ void initialize() {
     initFlipper();
     initLift();
 
-    // chassis.calibrate();
+    chassis.calibrate();
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
         if (routine == std::nullopt) {
@@ -29,9 +29,22 @@ void disabled() {}
 void competition_initialize() {
     selector.focus();
 }
+void testIMU() {
+    console.focus();
+    chassis.setPose(0, 0, 0);
+
+    while (true) {
+        console.printf("Pose heading: %.2f", chassis.getPose().theta);
+        pros::delay(100);
+        console.clear();
+    }
+
+}
 
 void autonomous() {
-    selector.run_auton();
+    // selector.run_auton();
+    turnTesting(true);
+    // driveTesting(true);
 }
 
 void opcontrol() {
