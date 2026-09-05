@@ -10,7 +10,6 @@ rd::Console console;
 void initialize() {
     selector.focus();
 
-    initFlipper();
     initLift();
 
     chassis.calibrate();
@@ -29,6 +28,7 @@ void disabled() {}
 void competition_initialize() {
     selector.focus();
 }
+
 void testIMU() {
     console.focus();
     chassis.setPose(0, 0, 0);
@@ -51,9 +51,7 @@ void opcontrol() {
     while (true) {
         handleArcade();
 
-        flipperButtons();
-        scoringMacro();
-        liftControl();
+        //liftControl();
 
         manualIntake();
         applyIntakeState();

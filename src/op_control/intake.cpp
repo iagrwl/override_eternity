@@ -18,5 +18,5 @@ void applyIntakeState() {
               : (intakeState == IntakeState::OUT) ? -127
               : 0;
     clawIntake.move(power);
-    firstStage.move(power);
+    intake.move(power);
 }

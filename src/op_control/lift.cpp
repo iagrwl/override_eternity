@@ -3,7 +3,7 @@
 
 constexpr int liftVelocity = 100; 
 
-
+// inital lift init stage. do not delete. this tares the liftat the start of the code. if init runs wrong way change motor port to neg sign.
 void initLift() {
     lift.set_brake_mode_all(pros::MotorBrake::hold);
     lift.move(-100); 
@@ -28,7 +28,7 @@ void liftPos(double degree) {
     lift.move_absolute(degree, liftVelocity);
 }
 
-
+// motion profiling for lift. do not delete. this is for simply controlly lift up and down using R1, R2
 void liftControl() {
     static int currentPower = 0;
     const int rampStep = 10;

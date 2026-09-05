@@ -11,14 +11,14 @@ extern rd::Selector selector;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
-inline pros::MotorGroup left_dt({-5, -9}, pros::MotorGearset::blue);
-inline pros::MotorGroup right_dt({7, 20}, pros::MotorGearset::blue);
+inline pros::MotorGroup left_dt({-5, -9,-8}, pros::MotorGearset::blue);
+inline pros::MotorGroup right_dt({7, 20,19}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
                                      &right_dt,
                                      11,    // track width
-                                     3.25,  // wheel diameter
-                                     360,   // rpm
+                                     2.75,  // wheel diameter
+                                     450,   // rpm
                                      0);
 
 // odom sensors
@@ -71,14 +71,11 @@ inline lemlib::Chassis chassis(drivetrain,
 // MOTORS (negative port = reversed) //
 
 // lift (dr4b)
-inline pros::MotorGroup lift({-19, 14}, pros::MotorGearset::green);
+inline pros::MotorGroup lift({19, -14}, pros::MotorGearset::green);
 
 // intake
-inline pros::Motor firstStage(-21, pros::MotorGearset::blue);
+inline pros::Motor intake(-21, pros::MotorGearset::blue);
 inline pros::Motor clawIntake(-16, pros::MotorGearset::green);
-
-// flipper arm
-inline pros::Motor intakePivot(-4, pros::MotorGearset::green);
 
 // wall-reset distance sensors
 inline pros::Distance leftDistance(20);
