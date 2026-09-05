@@ -1,6 +1,6 @@
 <h1 style="font-size: 100px;">eternity repo clone directions</h1>
 
-### This reposoitory contains code for team 42824A Eternity's Robot, below are instructions to get this code onto your computer:
+### This repository contains code for team 42824A Eternity's Robot, below are instructions to get this code onto your computer:
 
 ## **Project Setup Guide**
 
