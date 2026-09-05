@@ -10,17 +10,26 @@ void initLift() {
     pros::delay(200); 
     
     double lastPos = -999;
-    while (true) {
-        double currentPos = lift.get_position(); 
+    uint32_t startTime = pros::millis();
+    const uint32_t homingTimeoutMs = 1000;
+    bool stalled = false;
+    while (pros::millis() - startTime < homingTimeoutMs) {
+        double currentPos = lift.get_position();
         if (std::abs(currentPos - lastPos) < 2.0) {
-            break; 
+            stalled = true;
+            break;
         }
         lastPos = currentPos;
         pros::delay(50);
     }
-    
+
     lift.brake();
     lift.tare_position();
+
+    if (!stalled) {
+        controller.print(0, 0, "LIFT NOT ZEROED");
+        controller.rumble(".-.-");
+    }
 }
 
 

@@ -71,7 +71,7 @@ inline lemlib::Chassis chassis(drivetrain,
 // MOTORS (negative port = reversed) //
 
 // lift (dr4b)
-inline pros::MotorGroup lift({19, -14}, pros::MotorGearset::green);
+inline pros::MotorGroup lift({-19, 14}, pros::MotorGearset::green);
 
 // intake
 inline pros::Motor intake(-21, pros::MotorGearset::blue);
