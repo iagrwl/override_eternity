@@ -10,7 +10,7 @@ rd::Console console;
 void initialize() {
     selector.focus();
 
-    initLift();
+    // initLift();
 
     chassis.calibrate();
 
@@ -51,7 +51,7 @@ void opcontrol() {
     while (true) {
         handleArcade();
 
-        //liftControl();
+        liftControl();
 
         manualIntake();
         applyIntakeState();
