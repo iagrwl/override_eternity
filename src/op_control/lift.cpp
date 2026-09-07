@@ -33,7 +33,7 @@ void liftControl() {
     static int currentPower = 0;
     const int rampStep = 10;
     const int minHoldPower = 40;
-    const int slowDownPower = 40;
+    const int slowDownPower = 100;
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         currentPower = 127;
