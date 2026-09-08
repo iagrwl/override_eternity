@@ -52,6 +52,7 @@ void opcontrol() {
         handleArcade();
 
         liftControl();
+        handleClaw();
 
         manualIntake();
         applyIntakeState();

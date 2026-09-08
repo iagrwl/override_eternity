@@ -11,8 +11,8 @@ extern rd::Selector selector;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
-inline pros::MotorGroup left_dt({-5, -12,-8}, pros::MotorGearset::blue);
-inline pros::MotorGroup right_dt({7, 20,19}, pros::MotorGearset::blue);
+inline pros::MotorGroup right_dt({-7, 6,10}, pros::MotorGearset::blue);
+inline pros::MotorGroup left_dt({4, -5, -2}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
                                      &right_dt,
@@ -24,7 +24,7 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 // odom sensors
 inline pros::Imu imu(8);
 // inline pros::Rotation horizontalEnc(8);
-inline pros::Rotation verticalEnc(14);
+inline pros::Rotation verticalEnc(8);
 
 // inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2, 0);
 inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, 0.5);
@@ -68,14 +68,19 @@ inline lemlib::Chassis chassis(drivetrain,
                                &throttle_curve,
                                &steer_curve);
 
+// PNEUMATICS //
+inline pros::adi::DigitalOut clawOpen('A');
+inline pros::adi::DigitalOut clawScoring('B');
+
+
 // MOTORS (negative port = reversed) //
 
 // lift (dr4b)
 inline pros::MotorGroup lift({-19, 9}, pros::MotorGearset::green);
 
 // intake
-inline pros::Motor intake(-21, pros::MotorGearset::blue);
-inline pros::Motor clawIntake(-16, pros::MotorGearset::green);
+inline pros::Motor intake(14, pros::MotorGearset::blue);
+inline pros::Motor clawIntake(21, pros::MotorGearset::blue);
 
 // wall-reset distance sensors
 inline pros::Distance leftDistance(20);
