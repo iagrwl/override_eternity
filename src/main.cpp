@@ -10,7 +10,7 @@ rd::Console console;
 void initialize() {
     selector.focus();
 
-    // initLift();
+    initLift();
 
     chassis.calibrate();
 
