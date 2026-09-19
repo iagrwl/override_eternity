@@ -11,8 +11,8 @@ extern rd::Selector selector;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
+inline pros::MotorGroup left_dt({16, -5,-2}, pros::MotorGearset::blue);
 inline pros::MotorGroup right_dt({-7, 6,10}, pros::MotorGearset::blue);
-inline pros::MotorGroup left_dt({4, -5, -2}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
                                      &right_dt,
@@ -76,11 +76,11 @@ inline pros::adi::DigitalOut clawScoring('B');
 // MOTORS (negative port = reversed) //
 
 // lift (dr4b)
-inline pros::MotorGroup lift({-19, 9}, pros::MotorGearset::green);
+inline pros::MotorGroup lift({-19, 9}, pros::MotorGearset::red);
 
 // intake
-inline pros::Motor intake(14, pros::MotorGearset::blue);
-inline pros::Motor clawIntake(21, pros::MotorGearset::blue);
+inline pros::Motor intake(-21, pros::MotorGearset::blue);
+inline pros::Motor clawIntake(-16, pros::MotorGearset::green);
 
 // wall-reset distance sensors
 inline pros::Distance leftDistance(20);
