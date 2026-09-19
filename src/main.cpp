@@ -9,10 +9,9 @@ rd::Console console;
 
 void initialize() {
     selector.focus();
-
     initLift();
-
     chassis.calibrate();
+    pros::delay(500);
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
         if (routine == std::nullopt) {
@@ -29,31 +28,31 @@ void competition_initialize() {
     selector.focus();
 }
 
-void testIMU() {
-    console.focus();
-    chassis.setPose(0, 0, 0);
+void consoleWrite() {
+    console.focus(); 
 
     while (true) {
-        console.printf("Pose heading: %.2f", chassis.getPose().theta);
-        pros::delay(100);
-        console.clear();
+        console.clear(); 
+            
+        lemlib::Pose pose = chassis.getPose();
+        console.printf("le pose is X: %.1f  Y: %.1f  angle: %.1f\n", pose.x, pose.y, pose.theta);
+            
+        pros::delay(200);
     }
-
 }
 
 void autonomous() {
-    // selector.run_auton();
-    turnTesting(true);
-    // driveTesting(true);
+    consoleWrite(); 
 }
 
 void opcontrol() {
+
+    pros::Task consoleTask(consoleWrite);
+
     while (true) {
         handleArcade();
-
         liftControl();
         handleClaw();
-
         manualIntake();
         applyIntakeState();
 
