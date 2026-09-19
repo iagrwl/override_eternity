@@ -42,7 +42,9 @@ void consoleWrite() {
 }
 
 void autonomous() {
+    turnTesting(true);
     consoleWrite(); 
+    
 }
 
 void opcontrol() {
