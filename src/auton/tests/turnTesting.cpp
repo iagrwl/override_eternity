@@ -10,7 +10,7 @@ void turnTesting(bool isCW) {
 
         int currTurn = isCW ? turns[i] : -turns[i];
 
-        chassis.turnToHeading(currTurn, 2000, {}, false);
+        chassis.turnToHeading(-currTurn, 2000, {}, false);
         pros::delay(1000);
         // console.printf("%d: %.2f \n", currTurn, chassis.getPose().theta);
         std::cout << currTurn << ": " << chassis.getPose().theta << std::endl;
