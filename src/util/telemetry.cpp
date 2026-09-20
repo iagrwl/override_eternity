@@ -12,3 +12,8 @@ void telemetry() {
          << chassis.getPose().y << ","
          << chassis.getPose().theta << "\n";
 }
+
+void printPose(const char *label) {
+    lemlib::Pose p = chassis.getPose();
+    printf("%-22s x: %7.2f   y: %7.2f   theta: %7.2f\n", label, p.x, p.y, p.theta);
+}
