@@ -52,13 +52,13 @@ inline lemlib::ControllerSettings lateral_controller(7,    // kP
 
 // angular pid
 inline lemlib::ControllerSettings angular_controller(2.2,      // kP
-                                                     0,   // kI
-                                                     8,     // kD
-                                                     0,      // anti windup
-                                                     0,      // small error range, deg
-                                                     0,    // small error timeout, ms
-                                                     0,      // large error range, deg
-                                                     0,    // large error timeout, ms
+                                                     0.25,   // kI
+                                                     15,     // kD
+                                                     4.5,      // anti windup
+                                                     1,      // small error range, deg
+                                                     100,    // small error timeout, ms
+                                                     3,      // large error range, deg
+                                                     250,    // large error timeout, ms
                                                      0);    // max acceleration (slew)
 // drive curves: https://www.vexforum.com/t/expo-drive-lemlibs-implementation
 inline lemlib::ExpoDriveCurve throttle_curve(3, 0, 1.01);
