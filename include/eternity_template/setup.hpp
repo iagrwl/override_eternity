@@ -23,14 +23,14 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 
 // odom sensors
 
-inline pros::Imu imu(4); 
+inline pros::Imu imu(14); 
 
-inline pros::Rotation horizontalEnc(12);
+inline pros::Rotation horizontalEnc(13);
 inline pros::Rotation verticalEnc(8);
 // ver is 2.75
 //horz is 2
-inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2, 0);
-inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, 0.5);
+inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, 0);
+inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275 * 24/23.5, 0.5);
 
 
 inline lemlib::OdomSensors sensors(&verticalTrackingWheel,   // v1
@@ -51,16 +51,15 @@ inline lemlib::ControllerSettings lateral_controller(7,    // kP
                                                      5);   // max acceleration (slew)
 
 // angular pid
-inline lemlib::ControllerSettings angular_controller(5,      // kP
-                                                     0.25,   // kI
-                                                     43,     // kD
-                                                     4,      // anti windup
-                                                     1,      // small error range, deg
-                                                     100,    // small error timeout, ms
-                                                     3,      // large error range, deg
-                                                     350,    // large error timeout, ms
-                                                     50);    // max acceleration (slew)
-
+inline lemlib::ControllerSettings angular_controller(2.2,      // kP
+                                                     0,   // kI
+                                                     8,     // kD
+                                                     0,      // anti windup
+                                                     0,      // small error range, deg
+                                                     0,    // small error timeout, ms
+                                                     0,      // large error range, deg
+                                                     0,    // large error timeout, ms
+                                                     0);    // max acceleration (slew)
 // drive curves: https://www.vexforum.com/t/expo-drive-lemlibs-implementation
 inline lemlib::ExpoDriveCurve throttle_curve(3, 0, 1.01);
 inline lemlib::ExpoDriveCurve steer_curve(3, 0, 1.01);
