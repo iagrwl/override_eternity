@@ -11,7 +11,8 @@ void driveTesting(bool isForward) {
 
         chassis.moveToPoint(0, currDist, 3000, {}, false);
         pros::delay(500);
-        console.printf("%d: %.2f \n", currDist, chassis.getPose().y);
+        // console.printf("%d: %.2f \n", currDist, chassis.getPose().y);
+        std::cout << currDist << ": " << chassis.getPose().y << std::endl;
 
         chassis.moveToPoint(0, 0, 3000, {.forwards = false});
     }

@@ -45,9 +45,21 @@ void consoleWrite() {
 }
 
 void autonomous() {
-    turnTesting(true);
-    consoleWrite(); 
-    
+    pros::Task pos(&consoleWrite);
+    // driveTesting(true);
+    pros::Task logger([] {
+        while (true) {
+            auto p = chassis.getPose();
+            std::cout << p.x << "," << p.y << "," << p.theta
+                    << " | L=" << left_dt.get_actual_velocity_all()[0]
+                    << " R=" << right_dt.get_actual_velocity_all()[0] << std::endl;
+            pros::delay(50);
+        }
+    });
+    chassis.setPose(0, 0, 0);
+    chassis.moveToPoint(0, 24, 5000, {}, false);
+    logger.remove();
+        
 }
 
 void opcontrol() {

@@ -16,7 +16,7 @@ inline pros::MotorGroup right_dt({-7, 6,10}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
                                      &right_dt,
-                                     11,    // track width
+                                     9.75,    // track width
                                      2.75,  // wheel diameter
                                      450,   // rpm
                                      0);
@@ -25,12 +25,12 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 
 inline pros::Imu imu(14); 
 
-inline pros::Rotation horizontalEnc(13);
-inline pros::Rotation verticalEnc(8);
+inline pros::Rotation horizontalEnc(-13);
+inline pros::Rotation verticalEnc(-8);
 // ver is 2.75
 //horz is 2
-inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, 0);
-inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275 * 24/23.5, 0.5);
+inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, 3.5);
+inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275 * 24/23.5, -0.5);
 
 
 inline lemlib::OdomSensors sensors(&verticalTrackingWheel,   // v1
@@ -40,15 +40,15 @@ inline lemlib::OdomSensors sensors(&verticalTrackingWheel,   // v1
                                    &imu);
 
 // lateral pid
-inline lemlib::ControllerSettings lateral_controller(7,    // kP
+inline lemlib::ControllerSettings lateral_controller(100,    // kP
                                                      0,    // kI
-                                                     30,   // kD
+                                                     0,   // kD
                                                      0,    // anti windup
-                                                     1,    // small error range, in
-                                                     100,  // small error timeout, ms
-                                                     3,    // large error range, in
-                                                     250,  // large error timeout, ms
-                                                     5);   // max acceleration (slew)
+                                                     0,    // small error range, in
+                                                     0,  // small error timeout, ms
+                                                     0,    // large error range, in
+                                                     0,  // large error timeout, ms
+                                                     0);   // max acceleration (slew)
 
 // angular pid
 inline lemlib::ControllerSettings angular_controller(2.2,      // kP
