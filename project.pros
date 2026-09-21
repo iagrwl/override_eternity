@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "ishaan_pid",
+    "project_name": "eternity",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -340,9 +340,9 @@
       }
     },
     "upload_options": {
-      "description": "lift testing",
-      "icon": "pros",
-      "slot": 2
+      "description": "iloveeternity",
+      "icon": "X",
+      "slot": 1
     },
     "use_early_access": false
   }

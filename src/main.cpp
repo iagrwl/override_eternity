@@ -2,7 +2,9 @@
 #include "robodash/api.h"
 
 rd::Selector selector({
-  {"solo AWP", &soloAWP}
+  {"solo AWP", &soloAWP},
+  {"simple route", &simpleRoute},
+  {"basic-parth", &basicParth}
 });
 
 rd::Console console;
@@ -32,38 +34,24 @@ void competition_initialize() {
 }
 
 void consoleWrite() {
-    console.focus(); 
+    console.focus();
 
     while (true) {
-        console.clear(); 
-            
+        console.clear();
+
         lemlib::Pose pose = chassis.getPose();
-        console.printf("le pose is X: %.1f  Y: %.1f  angle: %.1f\n", pose.x, pose.y, pose.theta);
-            
+        console.printf("X: %.1f  Y: %.1f  angle: %.1f\n", pose.x, pose.y, pose.theta);
+
         pros::delay(200);
     }
 }
 
 void autonomous() {
-    pros::Task pos(&consoleWrite);
-    // driveTesting(true);
-    pros::Task logger([] {
-        while (true) {
-            auto p = chassis.getPose();
-            std::cout << p.x << "," << p.y << "," << p.theta
-                    << " | L=" << left_dt.get_actual_velocity_all()[0]
-                    << " R=" << right_dt.get_actual_velocity_all()[0] << std::endl;
-            pros::delay(50);
-        }
-    });
-    chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 24, 5000, {}, false);
-    logger.remove();
-        
+    // selector.run_auton();
+    basicParth();
 }
 
 void opcontrol() {
-
     pros::Task consoleTask(consoleWrite);
 
     while (true) {
