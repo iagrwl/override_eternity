@@ -38,6 +38,7 @@ void consoleWrite() {
 
         lemlib::Pose pose = chassis.getPose();
         console.printf("X: %.1f  Y: %.1f  angle: %.1f\n", pose.x, pose.y, pose.theta);
+        console.printf("claw: %s\n", isClawOpen ? "OPEN" : "CLOSED");
 
         pros::delay(200);
     }

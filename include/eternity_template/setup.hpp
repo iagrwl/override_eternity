@@ -72,8 +72,10 @@ inline lemlib::Chassis chassis(drivetrain,
                                &steer_curve);
 
 // PNEUMATICS //
-inline pros::adi::DigitalOut clawOpen('A');
-inline pros::adi::DigitalOut clawScoring('B');
+inline pros::adi::DigitalOut clawPivot('A');
+inline pros::adi::DigitalOut claw('B');
+
+
 
 
 // MOTORS (negative port = reversed) //
