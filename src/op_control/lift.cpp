@@ -39,27 +39,14 @@ void liftPos(double degree) {
     lift.move_absolute(degree, liftVelocity);
 }
 
-// motion profiling for lift. do not delete. this is for simply controlly lift up and down using R1, R2
 void liftControl() {
-    static int currentPower = 0;
-    const int rampStep = 10;
-    const int minHoldPower = 40;
-    const int slowDownPower = 100;
-
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        currentPower = 127;
-        lift.move(currentPower);
+        lift.move(127);
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-        currentPower = -slowDownPower;
-        lift.move(currentPower);
-    }
-    else if (currentPower > minHoldPower) {
-        currentPower -= rampStep;
-        lift.move(currentPower);
+        lift.move(-127);
     }
     else {
-        currentPower = 0;
         lift.brake();
     }
 }
