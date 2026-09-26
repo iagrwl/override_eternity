@@ -1,4 +1,5 @@
 #pragma once
 
-// declare all match routes here
 void soloAWP();
+void simpleRoute();
+void basicParth();
