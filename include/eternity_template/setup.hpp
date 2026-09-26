@@ -81,7 +81,7 @@ inline pros::adi::DigitalOut claw('B');
 // MOTORS (negative port = reversed) //
 
 // lift (dr4b)
-inline pros::MotorGroup lift({19, -9}, pros::MotorGearset::red);
+inline pros::MotorGroup lift({1, -9}, pros::MotorGearset::green);
 
 // intake
 inline pros::Motor intake(-21, pros::MotorGearset::blue);
