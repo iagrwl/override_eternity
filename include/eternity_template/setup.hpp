@@ -11,7 +11,7 @@ extern rd::Selector selector;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
-inline pros::MotorGroup left_dt({18, -6,10}, pros::MotorGearset::blue);
+inline pros::MotorGroup left_dt({18, -6, -10}, pros::MotorGearset::blue);
 inline pros::MotorGroup right_dt({3, 5,-2}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
@@ -26,11 +26,11 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 inline pros::Imu imu(14); 
 
 inline pros::Rotation horizontalEnc(-13);
-inline pros::Rotation verticalEnc(-8);
+inline pros::Rotation verticalEnc(8);
 // ver is 2.75
 //horz is 2
 inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, 3.5);
-inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275 * 24/23.5, -0.5);
+inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, -0.5);
 
 
 inline lemlib::OdomSensors sensors(&verticalTrackingWheel,   // v1

@@ -18,6 +18,8 @@ void initialize() {
     left_dt.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
     right_dt.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 
+    claw.set_value(false);
+
     selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
         if (routine == std::nullopt) {
             controller.print(2, 0, "select route");
@@ -49,7 +51,9 @@ void consoleWrite() {
 
 void autonomous() {
     // selector.run_auton();
-    basicParth();
+    // basicParth();
+    five_pin();
+    
 }
 
 void opcontrol() {
