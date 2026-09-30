@@ -29,7 +29,9 @@ void initialize() {
     });
 }
 
-void disabled() {}
+void disabled() {
+    
+}
 
 void competition_initialize() {
     selector.focus();
