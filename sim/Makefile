@@ -4,6 +4,7 @@
 CACHE    := .cache
 LVGL_DIR := $(CACHE)/lvgl
 BIN      := $(CACHE)/brain_sim
+.DEFAULT_GOAL := $(BIN)
 
 SDL_CFLAGS := $(shell sdl2-config --cflags)
 SDL_LIBS   := $(shell sdl2-config --libs)
