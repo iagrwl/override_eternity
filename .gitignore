@@ -15,3 +15,6 @@ temp.log
 temp.errors
 *.ini
 .d/
+# desktop UI simulator build cache
+sim/.cache/
+sim/screenshots/

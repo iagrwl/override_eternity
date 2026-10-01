@@ -2,10 +2,10 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
-#include "robodash/api.h"
+#include "eternity_template/ui/ui.hpp"
 
-extern rd::Console console;
-extern rd::Selector selector;
+// brain LOG page (console.printf / clear / focus)
+extern ui::Console console;
 
 // controller
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
