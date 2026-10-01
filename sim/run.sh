@@ -24,7 +24,7 @@ if [ "$1" != "--watch" ]; then
 fi
 
 # --watch: poll for saved changes, rebuild, relaunch
-WATCH="../src/ui ../include/eternity_template/ui ../src/auton/auton_list.cpp ."
+WATCH="../src/ui ../include/eternity_template/ui ../include/eternity_template/auton ../src/auton/auton_list.cpp ."
 stamp() { find $WATCH -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.h' \) -newer .cache/brain_sim 2>/dev/null | head -1; }
 
 build || true

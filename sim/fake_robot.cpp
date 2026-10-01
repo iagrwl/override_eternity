@@ -11,13 +11,6 @@
 
 FakeRobot robot;
 
-// stubs for the auton functions referenced by src/auton/auton_list.cpp
-void five_pin() {}
-void soloAWP() {}
-void simpleRoute() {}
-void basicParth() {}
-void simpleSkills() {}
-
 namespace ui::hw {
 
 // same names/ports as robot_io.cpp + setup.hpp

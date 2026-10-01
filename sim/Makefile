@@ -17,7 +17,18 @@ LVGL_OBJS := $(patsubst $(LVGL_DIR)/src/%.c,$(CACHE)/lvgl_obj/%.o,$(LVGL_SRCS))
 
 UI_SRCS  := $(filter-out ../src/ui/robot_io.cpp,$(wildcard ../src/ui/*.cpp)) ../src/auton/auton_list.cpp
 SIM_SRCS := sim_main.cpp fake_robot.cpp editor.cpp
-UI_OBJS  := $(patsubst ../src/%.cpp,$(CACHE)/ui_obj/%.o,$(UI_SRCS)) $(patsubst %.cpp,$(CACHE)/ui_obj/sim/%.o,$(SIM_SRCS))
+UI_OBJS  := $(patsubst ../src/%.cpp,$(CACHE)/ui_obj/%.o,$(UI_SRCS)) $(patsubst %.cpp,$(CACHE)/ui_obj/sim/%.o,$(SIM_SRCS)) \
+            $(CACHE)/ui_obj/auton_stubs.o
+
+# empty versions of every auton function declared in include/eternity_template/auton/,
+# so auton_list.cpp links without the real (pros-only) route code
+AUTON_HEADERS := $(wildcard ../include/eternity_template/auton/*.hpp)
+$(CACHE)/auton_stubs.cpp: $(AUTON_HEADERS)
+	@mkdir -p $(dir $@)
+	@sed -nE 's/^[[:space:]]*void[[:space:]]+([A-Za-z_0-9]+)[[:space:]]*\(([^)]*)\)[[:space:]]*;.*/void \1(\2) {}/p' $^ > $@
+
+$(CACHE)/ui_obj/auton_stubs.o: $(CACHE)/auton_stubs.cpp
+	@$(CXX) -std=c++17 -w -c $< -o $@
 
 $(BIN): $(CACHE)/liblvgl.a $(UI_OBJS)
 	@echo "  link  brain_sim"
