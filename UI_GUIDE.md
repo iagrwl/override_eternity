@@ -1,99 +1,254 @@
-# Brain UI guide
+# Brain Screen Guide
 
-The brain UI and the laptop simulator run the same code (`src/ui/`). Anything you change and preview in the sim shows up on the brain the next time you upload.
+This explains the robot's touchscreen: how to add autos, how to change what the screen shows, and how to preview it all on a laptop.
 
-## 1. Preview on your laptop
+**Contents**
+1. [What's on the screen](#1-whats-on-the-screen)
+2. [Add a new auto](#2-add-a-new-auto) ← most common
+3. [Preview the screen on your laptop](#3-preview-the-screen-on-your-laptop)
+4. [Change the layout (drag and drop)](#4-change-the-layout-drag-and-drop)
+5. [Show your own numbers on the screen](#5-show-your-own-numbers-on-the-screen)
+6. [Where everything lives](#6-where-everything-lives)
+7. [Competition day checklist](#7-competition-day-checklist)
+8. [Problems and fixes](#8-problems-and-fixes)
 
-```
-brew install sdl2          # once
-./sim/run.sh --watch       # opens the sim, rebuilds every time you save
-```
+---
 
-Arrow keys drive the sim robot. `1`/`2`/`3` switch between disabled, auton and driver. `c` plugs or unplugs the comp cable. `s` saves a screenshot, and `m` shows how much of the brain's 32 KB UI memory you're using.
+## 1. What's on the screen
 
-## 2. Change the layout by dragging (edit mode)
+Tap the icons on the left side of the brain to switch tabs.
 
-Drag anything from the **palette on the right** onto a custom tab (like HOME), or press **`E`**.
-
-| do this | how |
+| Tab | What it's for |
 |---|---|
-| move a widget | drag it (arrows nudge it, shift+arrows move 10 px) |
-| resize | drag its bottom-right corner (or cmd+arrows) |
-| change the text | select the widget, press enter, type, press enter |
-| change what it shows | `d` / `D` cycles through the data sources |
-| change the widget type | `t` (Label, Value, Bar, Gauge, Light) |
-| change the color | `k` |
-| copy / delete | `c` / `delete` |
-| new tab | `n`, then enter to rename it |
-| remove the current tab | `x` twice |
-| reorder tabs | `,` and `.` |
-| change the tab icon | `i` |
-| **save** | `w` (leaving edit mode with `e` also saves) |
+| **AUTON** | Pick which auto runs. The pick is saved, so it remembers after a restart. |
+| **HOME** | Quick info: battery, heading, temps, claw, intake. You can change what's here. |
+| **FIELD** | Map of where the robot thinks it is, with the path it drove. |
+| **MOTORS** | Temperature and health of every motor. |
+| **SENSORS** | IMU, tracking wheels, distance sensors, and which ports are plugged in. |
+| **GRAPH** | Live graphs (drive speed, heading, temps, power). |
+| **LOG** | Messages from `console.printf(...)`. |
+| **TOOLS** | Calibrate IMU, reset position, PID tests. |
 
-Saving writes to `src/ui/layout.cpp`. Upload the code and the brain will look the same.
+The bar across the top shows the match mode, the time left, and battery.
 
-## 3. Change things by hand
+A red **⚠** badge in the top bar means a device is unplugged or on the wrong port. Tap it to see which one.
 
-- **Colors, team name, °F/°C, match timers, temperature limits:** `include/eternity_template/ui/ui_config.hpp`
-- **Tabs and widgets:** `src/ui/layout.cpp` has one line per tab and one line per widget. Delete a tab's line to remove it, move lines to reorder.
-- **Data you can show:** listed at the top of `src/ui/sources.cpp`.
+---
 
-## 4. Show your own numbers on the brain
+## 2. Add a new auto
 
-From anywhere in robot code:
+You only touch **3 files**. Example: an auto called `redRush`.
+
+### Step 1: Write the auto
+
+Make a new file: **`src/auton/match_routes/redRush.cpp`**
+
+```cpp
+#include "main.h"
+
+void redRush() {
+    // Where the robot starts. (x, y, heading)
+    // x/y are inches from the center of the field.
+    // heading: 0 = forward, 90 = right, 180 = back, 270 = left
+    chassis.setPose(-36, -60, 0);
+
+    // Drive to a spot (x, y, give up after 2000 ms)
+    chassis.moveToPoint(-36, -24, 2000);
+
+    // Turn to face a direction
+    chassis.turnToHeading(90, 1000);
+
+    // Drive backwards and slower, and WAIT until it's done (the "false" at the end)
+    chassis.moveToPoint(-12, -24, 2000, {.forwards = false, .maxSpeed = 80}, false);
+
+    // Use mechanisms like normal
+    claw.set_value(true);
+    lift.move(127);
+    pros::delay(300);
+    lift.move(0);
+
+    console.printf("redRush done"); // shows up on the LOG tab
+}
+```
+
+> 💡 **Moves don't wait by default.** The next line starts right away.
+> To wait for a move to finish, put `false` as the last thing in the move (like above), or add `chassis.waitUntilDone();` after it.
+
+### Step 2: Tell the code it exists
+
+Open **`include/eternity_template/auton/match_routes.hpp`** and add:
+
+```cpp
+void redRush();
+```
+
+### Step 3: Put it on the brain's menu
+
+Open **`src/auton/auton_list.cpp`** and add one line inside the list:
+
+```cpp
+{"Red Rush", "Rush middle, grab 2, back to bar.", ui::Alliance::Red, redRush, true, -36, -60, 0},
+```
+
+What each part means:
+
+| Part | Example | Meaning |
+|---|---|---|
+| Name | `"Red Rush"` | What the button says on the brain |
+| Description | `"Rush middle..."` | Short note shown when you pick it |
+| Alliance | `ui::Alliance::Red` | Button color: `Red`, `Blue`, `Skills`, or `Any` |
+| Function | `redRush` | The name from Step 1 (no `()`) |
+| Start spot *(optional)* | `true, -36, -60, 0` | Same numbers as your `setPose`. Draws the robot on a mini map. Leave these 4 off if you don't care. |
+
+**That's it.** The auto now shows up on the AUTON tab.
+
+### Step 4: Test it
+
+- **On the laptop:** with the simulator open (see section 3), you'll see the new button. The simulator doesn't run your actual moves; it's for checking the menu.
+- **On the robot:**
+  1. Upload with `pros mu`.
+  2. Tap your auto on the **AUTON** tab.
+  3. To test without a competition switch, tap **TEST RUN**, then **RUN**. Tap **ABORT** to stop.
+  4. Check the **FIELD** tab to see the path it actually drove.
+
+### Step 5: Save it to GitHub
+
+```bash
+git add -A && git commit -m "add redRush auto" && git push
+```
+
+---
+
+## 3. Preview the screen on your laptop
+
+The simulator shows the exact same screen as the brain, in a window on your Mac.
+
+**First time only:**
+```bash
+brew install sdl2
+```
+
+**Every time:**
+```bash
+./sim/run.sh --watch
+```
+
+It reloads by itself every time you save a file. The first run takes about a minute to set up.
+
+**Controls in the simulator:**
+
+| Key | Does |
+|---|---|
+| Click | Tap the screen |
+| Arrow keys | Drive the pretend robot |
+| `1` / `2` / `3` | Disabled / Auton / Driver |
+| `c` | Plug or unplug the competition cable |
+| `E` | Edit mode (see section 4) |
+| `s` | Screenshot |
+| `m` | How much screen memory you're using |
+| `q` | Quit |
+
+---
+
+## 4. Change the layout (drag and drop)
+
+In the simulator, press **`E`** to start editing. An orange border means you're in edit mode.
+
+**Add stuff:** drag items from the **panel on the right** onto a tab like HOME.
+
+**Change tabs:** click **TABS** at the top of the right panel. Click a tab to show or hide it. Click **+ New info tab** to make a new one.
+
+| To do this | Do this |
+|---|---|
+| Move something | Drag it |
+| Resize | Drag its bottom-right corner |
+| Change its text | Click it → press **Enter** → type → press **Enter** |
+| Change what number it shows | Click it → press **`d`** (keep pressing to cycle) |
+| Change its style | **`t`** (Label, Value, Bar, Gauge, Light) |
+| Change its color | **`k`** |
+| Copy it | **`c`** |
+| Delete it | **Delete** |
+| Reorder tabs | Drag the tab icons on the left up or down |
+| Rename a tab | Click empty space → press **Enter** → type → **Enter** |
+| Change a tab's icon | **`i`** |
+| **Save** | **`w`** (pressing `E` to leave edit mode also saves) |
+
+After saving, upload with `pros mu` and the brain will look exactly like the simulator.
+
+> ⚠️ Press **Enter** before you type. If you press Backspace without pressing Enter first, it deletes the whole item instead of a letter.
+
+---
+
+## 5. Show your own numbers on the screen
+
+Want to see a value from your code, like a lift target or which step the auto is on? Add this anywhere in robot code:
 
 ```cpp
 ui::publish("lift.target", 400);
 ui::publish("auton.step", 3);
 ```
 
-Then give a widget the source `lift.target`. You can type it in `layout.cpp`, or press `d` in edit mode while the sim is running something that publishes it.
+Then, in the simulator's edit mode, add a **Value** widget, click it, and press **`d`** until it says `lift.target`. Or type the name into `src/ui/layout.cpp`.
 
-## 5. Add an auto
+---
 
-1. Write it in `src/auton/match_routes/myAuto.cpp`:
-   ```cpp
-#include "main.h"
-void myAuto() {
-    chassis.setPose(0, -60, 0);
-    chassis.moveToPoint(0, -36, 2000);
-}
-   ```
-2. Declare it in `include/eternity_template/auton/match_routes.hpp`:
-   ```cpp
-void myAuto();
-   ```
-3. Add one line to `src/auton/auton_list.cpp`:
-   ```cpp
-{"My Auto", "what it does", ui::Alliance::Red, myAuto, true, 0, -60, 0},
-   ```
-   The fields are name, description, alliance (`Red` / `Blue` / `Skills` / `Any`), function, and then (optional) the start pose for the preview map.
+## 6. Where everything lives
 
-It shows up as a card on the AUTON tab, in the sim and on the brain. Whatever card is picked is what runs in autonomous, and the pick is saved to the SD card.
+| I want to change… | File |
+|---|---|
+| The list of autos | `src/auton/auton_list.cpp` |
+| The default auto (used if there's no SD card) | Bottom of `src/auton/auton_list.cpp` |
+| Colors, team name, °F/°C, match timer | `include/eternity_template/ui/ui_config.hpp` |
+| Which tabs show, and what's on HOME | `src/ui/layout.cpp` (or use edit mode) |
+| What numbers widgets can show | `src/ui/sources.cpp` |
+| Added a new motor or sensor | `src/ui/robot_io.cpp` (and `sim/fake_robot.cpp` for the sim) |
 
-## 6. How it hooks into the brain code
-
-Everything is already wired into `src/main.cpp`. For a new project, these lines are all you need:
+<details>
+<summary><b>How it's hooked into main.cpp</b> (only needed for a brand new project)</summary>
 
 ```cpp
-ui::Console console;                        // console.printf(...) -> LOG tab
+ui::Console console;                        // console.printf(...) goes to the LOG tab
 
 void initialize() {
-    ui::init(autonList, defaultAuton);      // FIRST line: shows the splash
-    ui::setBootStatus("calibrating IMU");   // optional status text on the splash
+    ui::init(autonList, defaultAuton);      // FIRST line: shows the loading screen
+    ui::setBootStatus("calibrating IMU");   // optional text on the loading screen
     chassis.calibrate();
-    ui::bootComplete();                     // splash -> dashboard
+    ui::bootComplete();                     // loading screen -> main screen
 }
 
 void autonomous() { ui::runSelectedAuton(); }
 
 void opcontrol() {
     while (true) {
-        if (ui::routineRunning()) { pros::delay(20); continue; } // a brain-started test owns the robot
+        if (ui::routineRunning()) { pros::delay(20); continue; } // a test started from the brain is driving
         // ... driver code ...
         pros::delay(20);
     }
 }
 ```
 
-If you add a motor or sensor to `setup.hpp`, also add it to `src/ui/robot_io.cpp` so it appears on the MOTORS and SENSORS tabs. Do the same in `sim/fake_robot.cpp` if you want it in the sim.
+</details>
+
+---
+
+## 7. Competition day checklist
+
+- [ ] **SD card is in the brain.** Without it, the brain forgets your auto pick when it restarts.
+- [ ] No red **⚠** badge in the top bar (all devices plugged in).
+- [ ] Pick your auto on the **AUTON** tab **before** the match starts. The picker locks once the match is running.
+- [ ] The controller screen shows the auto you picked.
+- [ ] Battery is charged (top-right of the screen).
+
+---
+
+## 8. Problems and fixes
+
+| Problem | Fix |
+|---|---|
+| My new auto isn't on the menu | Check you did all 3 steps in section 2, and that the name in `auton_list.cpp` matches your function exactly. |
+| The brain forgot my auto pick | Put an SD card in the brain. Also, if you renamed the auto, you have to pick it again. |
+| Can't change the auto pick | It locks during a match. Wait until the robot is disabled. |
+| Red ⚠ in the top bar | Tap it. It shows which port has a problem. |
+| Simulator says `No such file or directory` | Run `cd ~/parth-local/override_eternity && ./sim/run.sh --watch` (make sure you're in the right folder). |
+| Simulator says `missing SDL2` | Run `brew install sdl2`. |
+| Simulator build failed | Read the error, fix the file, and save again. It retries by itself. |
