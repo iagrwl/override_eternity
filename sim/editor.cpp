@@ -144,7 +144,7 @@ void restoreState() {
 }
 
 static bool save() {
-    std::ifstream in(kLayoutFile);
+    std::ifstream in(kLayoutFile, std::ios::binary); // binary: keep line endings as-is on Windows
     if (!in) {
         s_status = "couldn't open src/ui/layout.cpp";
         return false;
@@ -160,7 +160,7 @@ static bool save() {
     a = src.find('\n', a) + 1;
     src = src.substr(0, a) + layoutCode() + src.substr(b);
     saveState();
-    std::ofstream(kLayoutFile) << src;
+    std::ofstream(kLayoutFile, std::ios::binary) << src;
     s_dirty = false;
     s_status = "saved to src/ui/layout.cpp - upload to put it on the brain";
     printf("%s\n", s_status.c_str());

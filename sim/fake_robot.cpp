@@ -5,7 +5,14 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <map>
+#include <regex>
+#include <sstream>
+#include <string>
+#include <vector>
 #include <SDL.h>
+#include "devices.hpp"
 #include "fake_robot.hpp"
 #include "ui_internal.hpp"
 
@@ -13,34 +20,68 @@ FakeRobot robot;
 
 namespace ui::hw {
 
-// same names/ports as robot_io.cpp + setup.hpp
+// ---- devices: names from src/ui/devices.hpp, ports read out of setup.hpp at startup,
+// so the sim always matches the real robot config
+static const char* kSetupFile = "../include/eternity_template/setup.hpp";
+
+struct SetupPorts {
+    std::map<std::string, std::vector<int>> ports; // variable name -> ports
+    SetupPorts() {
+        std::ifstream f(kSetupFile);
+        std::stringstream ss;
+        ss << f.rdbuf();
+        std::string src = ss.str();
+        // drop // comments so commented-out devices don't count
+        src = std::regex_replace(src, std::regex("//[^\n]*"), "");
+        // pros::Motor intake(-21, ...)   pros::MotorGroup left_dt({18, -6, -10}, ...)   pros::Imu imu(14)
+        std::regex dev("pros::(?:adi::)?[A-Za-z]+\\s+([A-Za-z_][A-Za-z_0-9]*)\\s*\\(\\s*\\{?\\s*(-?\\d+(?:\\s*,\\s*-?\\d+)*)");
+        for (std::sregex_iterator it(src.begin(), src.end(), dev), end; it != end; ++it) {
+            std::vector<int> list;
+            std::stringstream nums((*it)[2].str());
+            for (std::string n; std::getline(nums, n, ',');) list.push_back(std::stoi(n));
+            ports[(*it)[1].str()] = list;
+        }
+        if (ports.empty()) printf("[sim] couldn't read ports from %s\n", kSetupFile);
+    }
+    int get(const char* var, int index) const {
+        auto it = ports.find(var);
+        if (it == ports.end() || index >= (int)it->second.size()) {
+            printf("[sim] no port for %s[%d] in setup.hpp (check src/ui/devices.hpp)\n", var, index);
+            return 0;
+        }
+        return it->second[index];
+    }
+};
+
 struct FakeMotor {
     const char* name;
     int port;
     bool drive;
     float temp;
 };
-static FakeMotor motors[] = {
-    {"LEFT 1", 18, true, 34},  {"LEFT 2", -6, true, 35},  {"LEFT 3", -10, true, 36},
-    {"RIGHT 1", 3, true, 34},  {"RIGHT 2", 5, true, 35},  {"RIGHT 3", -2, true, 37},
-    {"LIFT A", 1, false, 33},  {"LIFT B", -9, false, 33}, {"INTAKE", -21, false, 32},
-    {"CLAW IN", -16, false, 32},
-};
-static constexpr int kMotorN = sizeof(motors) / sizeof(motors[0]);
-
 struct FakeSensor {
     const char* name;
     int port;
 };
-static const FakeSensor sensors[] = {
-    {"IMU", 14}, {"Horiz wheel", 13}, {"Vert wheel", 8}, {"Left dist", 16}, {"Right dist", 1},
-};
+static std::vector<FakeMotor> motors;
+static std::vector<FakeSensor> sensors;
+
+static void loadDevices() {
+    if (!motors.empty()) return;
+    SetupPorts setup;
+#define UI_MOTOR_FAKE(name, var, index) \
+    motors.push_back({name, setup.get(#var, index), motors.size() < 6, 32.0f + motors.size() % 4});
+    UI_MOTORS(UI_MOTOR_FAKE)
+#define UI_SENSOR_FAKE(name, var, type) sensors.push_back({name, setup.get(#var, 0)});
+    UI_SENSORS(UI_SENSOR_FAKE)
+}
 
 static uint32_t lastMs = 0;
 static bool running = false;
 static uint32_t runEnd = 0;
 
 void sample(Snapshot& s) {
+    loadDevices();
     uint32_t now = SDL_GetTicks();
     float dt = lastMs ? (now - lastMs) / 1000.0f : 0;
     lastMs = now;
@@ -83,10 +124,10 @@ void sample(Snapshot& s) {
     s.sd = true;
 
     s.motorCount = s.deviceCount = s.deviceProblems = 0;
-    for (int i = 0; i < kMotorN; i++) {
+    for (int i = 0; i < (int)motors.size() && i < kMaxMotors; i++) {
         FakeMotor& fm = motors[i];
         bool ok = !(i == 7 && r.unplugLift);
-        float load = fm.drive ? fabsf(i < 3 ? leftRpm : rightRpm) / 600 : (i == 8 || i == 9) && r.intakeOn ? 0.5f : 0;
+        float load = fm.drive ? fabsf(i < 3 ? leftRpm : rightRpm) / 600 : i >= 8 && r.intakeOn ? 0.5f : 0;
         fm.temp += (load * 6 - (fm.temp - 30) * 0.02f) * dt; // heats with load, cools toward 30C
         MotorStat& m = s.motors[s.motorCount++];
         m.name = fm.name, m.port = fm.port, m.ok = ok;
@@ -98,6 +139,7 @@ void sample(Snapshot& s) {
         d.name = fm.name, d.port = abs(fm.port), d.ok = ok, d.problem = ok ? nullptr : "unplugged";
     }
     for (const FakeSensor& fs : sensors) {
+        if (s.deviceCount >= kMaxDevices) break;
         DeviceStat& d = s.devices[s.deviceCount++];
         d.name = fs.name, d.port = fs.port, d.ok = true, d.problem = nullptr;
     }

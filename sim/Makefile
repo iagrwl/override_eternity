@@ -3,15 +3,20 @@
 
 CACHE    := .cache
 LVGL_DIR := $(CACHE)/lvgl
-BIN      := $(CACHE)/brain_sim
+
+# Windows (MSYS2) builds a .exe; everything else is the same
+ifeq ($(OS),Windows_NT)
+EXE := .exe
+endif
+BIN      := $(CACHE)/brain_sim$(EXE)
 .DEFAULT_GOAL := $(BIN)
 
 SDL_CFLAGS := $(shell sdl2-config --cflags)
-SDL_LIBS   := $(shell sdl2-config --libs)
+SDL_LIBS   := $(filter-out -mwindows,$(shell sdl2-config --libs)) # keep the console for printf
 
 COMMON  := -DLV_CONF_INCLUDE_SIMPLE -I. -I$(CACHE) -I../include -I../src/ui $(SDL_CFLAGS)
 CFLAGS  := -O2 -w $(COMMON)
-CXXFLAGS := -std=c++17 -O1 -g -Wall -Wno-unused-function -MMD -MP $(COMMON)
+CXXFLAGS := -std=gnu++17 -O1 -g -Wall -Wno-unused-function -MMD -MP $(COMMON)
 
 LVGL_SRCS := $(shell find $(LVGL_DIR)/src -name '*.c' 2>/dev/null)
 LVGL_OBJS := $(patsubst $(LVGL_DIR)/src/%.c,$(CACHE)/lvgl_obj/%.o,$(LVGL_SRCS))
@@ -29,7 +34,7 @@ $(CACHE)/auton_stubs.cpp: $(AUTON_HEADERS)
 	@sed -nE 's/^[[:space:]]*void[[:space:]]+([A-Za-z_0-9]+)[[:space:]]*\(([^)]*)\)[[:space:]]*;.*/void \1(\2) {}/p' $^ > $@
 
 $(CACHE)/ui_obj/auton_stubs.o: $(CACHE)/auton_stubs.cpp
-	@$(CXX) -std=c++17 -w -c $< -o $@
+	@$(CXX) -std=gnu++17 -w -c $< -o $@
 
 $(BIN): $(CACHE)/liblvgl.a $(UI_OBJS)
 	@echo "  link  brain_sim"

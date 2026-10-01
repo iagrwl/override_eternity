@@ -1,5 +1,5 @@
-// The one place the UI talks to the robot. Pages only see ui::Snapshot, so if you
-// add a motor/sensor to setup.hpp, add it here too and it shows up everywhere.
+// The one place the UI talks to the robot. Pages only see ui::Snapshot.
+// Adding a motor/sensor? Add it to devices.hpp - ports are read from setup.hpp.
 
 #include <atomic>
 #include <cstdio>
@@ -10,35 +10,25 @@
 namespace ui::hw {
 
 // ---------------------------------------------------------------- device table
+// the list itself is in devices.hpp; ports come from the objects in setup.hpp
+#include "devices.hpp"
+
 struct MotorEntry {
     const char* name;
-    pros::MotorGroup* group;
-    int index; // which motor inside the group
+    pros::AbstractMotor* motor; // Motor or MotorGroup
+    int index;                  // which motor inside the group
 };
-
-// drivetrain first (the graph's "drive max temp" uses the first six)
-static const MotorEntry kMotors[] = {
-    {"LEFT 1", &left_dt, 0},  {"LEFT 2", &left_dt, 1},  {"LEFT 3", &left_dt, 2},
-    {"RIGHT 1", &right_dt, 0}, {"RIGHT 2", &right_dt, 1}, {"RIGHT 3", &right_dt, 2},
-    {"LIFT A", &lift, 0},     {"LIFT B", &lift, 1},     {"INTAKE", nullptr, 0},
-    {"CLAW IN", nullptr, 1},
-};
+#define UI_MOTOR_ENTRY(name, var, index) {name, &var, index},
+static const MotorEntry kMotors[] = {UI_MOTORS(UI_MOTOR_ENTRY)};
 static constexpr int kMotorCount = sizeof(kMotors) / sizeof(kMotors[0]);
-static pros::Motor* const kSingles[] = {&intake, &clawIntake};
 
 struct SensorEntry {
     const char* name;
     pros::Device* dev;
     pros::DeviceType type;
 };
-
-static const SensorEntry kSensors[] = {
-    {"IMU", &imu, pros::DeviceType::imu},
-    {"Horiz wheel", &horizontalEnc, pros::DeviceType::rotation},
-    {"Vert wheel", &verticalEnc, pros::DeviceType::rotation},
-    {"Left dist", &leftDistance, pros::DeviceType::distance},
-    {"Right dist", &rightDistance, pros::DeviceType::distance},
-};
+#define UI_SENSOR_ENTRY(name, var, type) {name, &var, pros::DeviceType::type},
+static const SensorEntry kSensors[] = {UI_SENSORS(UI_SENSOR_ENTRY)};
 
 static bool plugged(int port, pros::DeviceType type) {
     if (port < 0) port = -port;
@@ -80,25 +70,15 @@ void sample(Snapshot& s) {
         const MotorEntry& e = kMotors[i];
         MotorStat& m = s.motors[s.motorCount++];
         m.name = e.name;
-        if (e.group) {
-            m.port = e.group->get_port(e.index);
-            m.ok = plugged(m.port, pros::DeviceType::motor);
-            m.tempC = e.group->get_temperature(e.index);
-            m.rpm = e.group->get_actual_velocity(e.index);
-            m.watts = e.group->get_power(e.index);
-            m.amps = e.group->get_current_draw(e.index) / 1000.0f;
-        } else {
-            pros::Motor* mot = kSingles[e.index];
-            m.port = mot->get_port();
-            m.ok = plugged(m.port, pros::DeviceType::motor);
-            m.tempC = mot->get_temperature();
-            m.rpm = mot->get_actual_velocity();
-            m.watts = mot->get_power();
-            m.amps = mot->get_current_draw() / 1000.0f;
-        }
+        m.port = e.motor->get_port(e.index);
+        m.ok = plugged(m.port, pros::DeviceType::motor);
+        m.tempC = e.motor->get_temperature(e.index);
+        m.rpm = e.motor->get_actual_velocity(e.index);
+        m.watts = e.motor->get_power(e.index);
+        m.amps = e.motor->get_current_draw(e.index) / 1000.0f;
         if (!m.ok) m.tempC = m.rpm = m.watts = m.amps = 0;
-        if (e.group == &left_dt) leftSum += m.rpm;
-        if (e.group == &right_dt) rightSum += m.rpm;
+        if (e.motor == &left_dt) leftSum += m.rpm;
+        if (e.motor == &right_dt) rightSum += m.rpm;
 
         DeviceStat& d = s.devices[s.deviceCount++];
         d.name = e.name;

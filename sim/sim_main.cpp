@@ -73,7 +73,7 @@ static void setMode(bool disabled, bool auton) {
     robot.autonomous = auton;
 }
 
-int main() {
+int main(int, char**) { // SDL needs this exact signature on Windows
     setvbuf(stdout, nullptr, _IONBF, 0);
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* win = SDL_CreateWindow("V5 brain sim", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (W + PW) * SCALE,
