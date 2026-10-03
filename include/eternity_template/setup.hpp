@@ -11,7 +11,7 @@ extern rd::Selector selector;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
-inline pros::MotorGroup left_dt({18, -6,10}, pros::MotorGearset::blue);
+inline pros::MotorGroup left_dt({18, -6,-10}, pros::MotorGearset::blue);
 inline pros::MotorGroup right_dt({3, 5,-2}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
