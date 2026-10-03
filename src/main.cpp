@@ -12,7 +12,7 @@ void initialize() {
     ui::setBootStatus("homing lift");
     initLift();
 
-    ui::setBootStatus("calibrating IMU - don't touch");
+    ui::setBootStatus("calibrating");
     chassis.calibrate();
     pros::delay(500);
 
