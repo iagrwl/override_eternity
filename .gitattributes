@@ -1,0 +1,3 @@
+# keep shell scripts LF so ./sim/run.sh works from Git Bash / MSYS2 on Windows
+*.sh text eol=lf
+sim/Makefile text eol=lf

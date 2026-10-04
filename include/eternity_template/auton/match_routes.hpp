@@ -2,5 +2,5 @@
 
 void soloAWP();
 void simpleRoute();
-void basicParth();
+void dummy();
 void five_pin();
