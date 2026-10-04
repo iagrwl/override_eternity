@@ -16,20 +16,20 @@ This explains the robot's touchscreen: how to add autos, how to change what the 
 
 ## 1. What's on the screen
 
-Tap the icons on the left side of the brain to switch tabs.
+Tap the tab names along the top of the brain to switch tabs.
 
 | Tab | What it's for |
 |---|---|
 | **AUTON** | Pick which auto runs. The pick is saved, so it remembers after a restart. |
-| **HOME** | Quick info: battery, heading, temps, claw, intake. You can change what's here. |
+| **HOME** | Quick info: battery, heading, position, claw, intake. You can change what's here. |
 | **FIELD** | Map of where the robot thinks it is, with the path it drove. |
-| **MOTORS** | Temperature and health of every motor. |
+| **MOTORS** | Every motor: plugged in or not, port, speed, power. |
 | **SENSORS** | IMU, tracking wheels, distance sensors, and which ports are plugged in. |
-| **GRAPH** | Live graphs (drive speed, heading, temps, power). |
+| **GRAPH** | Live graphs (drive speed, heading, power). Hidden by default; turn it on from the sim's TABS list. |
 | **LOG** | Messages from `console.printf(...)`. |
 | **TOOLS** | Calibrate IMU, reset position, PID tests. |
 
-The bar across the top shows the match mode, the time left, and battery.
+On the right of the top bar: a dot for the match mode (gray = off, blue = auton, green = driver), the time left during a match, and battery %. `NO SD` or `NO CTRL` only show up when something's missing.
 
 A red **⚠** badge in the top bar means a device is unplugged or on the wrong port. Tap it to see which one.
 
@@ -168,9 +168,8 @@ In the simulator, press **`E`** to start editing. An orange border means you're 
 | Change its color | **`k`** |
 | Copy it | **`c`** |
 | Delete it | **Delete** |
-| Reorder tabs | Drag the tab icons on the left up or down |
+| Reorder tabs | Drag a tab name in the top bar left or right |
 | Rename a tab | Click empty space → press **Enter** → type → **Enter** |
-| Change a tab's icon | **`i`** |
 | **Save** | **`w`** (pressing `E` to leave edit mode also saves) |
 
 After saving, upload with `pros mu` and the brain will look exactly like the simulator.
@@ -198,7 +197,7 @@ Then, in the simulator's edit mode, add a **Value** widget, click it, and press 
 |---|---|
 | The list of autos | `src/auton/auton_list.cpp` |
 | The default auto (used if there's no SD card) | Bottom of `src/auton/auton_list.cpp` |
-| Colors, team name, °F/°C, match timer | `include/eternity_template/ui/ui_config.hpp` |
+| Colors, team name, match timer | `include/eternity_template/ui/ui_config.hpp` |
 | Which tabs show, and what's on HOME | `src/ui/layout.cpp` (or use edit mode) |
 | What numbers widgets can show | `src/ui/sources.cpp` |
 | Added a new motor or sensor | `src/ui/robot_io.cpp` (and `sim/fake_robot.cpp` for the sim) |

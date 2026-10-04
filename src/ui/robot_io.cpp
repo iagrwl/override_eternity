@@ -56,7 +56,6 @@ void sample(Snapshot& s) {
     s.batteryPct = pros::battery::get_capacity();
     s.batteryV = pros::battery::get_voltage() / 1000.0f;
     s.batteryA = pros::battery::get_current() / 1000.0f;
-    s.batteryTemp = pros::battery::get_temperature();
     s.controllerOk = controller.is_connected();
     s.controllerBattery = s.controllerOk ? controller.get_battery_capacity() : 0;
     s.sd = pros::usd::is_installed();
@@ -72,11 +71,10 @@ void sample(Snapshot& s) {
         m.name = e.name;
         m.port = e.motor->get_port(e.index);
         m.ok = plugged(m.port, pros::DeviceType::motor);
-        m.tempC = e.motor->get_temperature(e.index);
         m.rpm = e.motor->get_actual_velocity(e.index);
         m.watts = e.motor->get_power(e.index);
         m.amps = e.motor->get_current_draw(e.index) / 1000.0f;
-        if (!m.ok) m.tempC = m.rpm = m.watts = m.amps = 0;
+        if (!m.ok) m.rpm = m.watts = m.amps = 0;
         if (e.motor == &left_dt) leftSum += m.rpm;
         if (e.motor == &right_dt) rightSum += m.rpm;
 
@@ -169,6 +167,7 @@ void runAsync(void (*fn)(), const char* name) {
         [fn, name] {
             uint32_t t0 = pros::millis();
             fn();
+            chassis.waitUntilDone(); // let the routine's last (async) move finish before driver control returns
             left_dt.move(0);
             right_dt.move(0);
             ui::log("%s: %s (%.1fs)", s_abort ? "ABORTED" : "DONE", name, (pros::millis() - t0) / 1000.0);
@@ -235,7 +234,7 @@ static const Routine kRoutines[] = {
     {"TURN CW", [] { turnTesting(true); }},
     {"TURN CCW", [] { turnTesting(false); }},
     {"SKILLS", simpleSkills},
-    {"BASIC TEST", basicParth},
+    {"DUMMY", dummy},
 };
 
 int testRoutines(const Routine** out) {

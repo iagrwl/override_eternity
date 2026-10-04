@@ -1,6 +1,7 @@
 #include "main.h"
 
-void basicParth() {
+void dummy() {
     chassis.setPose(0, 0, 0);
     chassis.moveToPoint(0, 6, 200,{},false);
+    liftPos(850);
 }

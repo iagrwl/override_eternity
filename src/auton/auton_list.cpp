@@ -8,13 +8,11 @@
 
 extern const std::vector<ui::Auton> autonList;
 const std::vector<ui::Auton> autonList = {
-    {"Five Pin", "ishaan aura", ui::Alliance::Any, five_pin, true, 0, -64,
-     180},
-    {"Solo AWP", "sawpy", ui::Alliance::Any, soloAWP},
-    {"Simple Route", "Drive 6in, turn 90, drive 4in. Sanity check.", ui::Alliance::Any, simpleRoute, true, 0, 0, 0},
-    {"Basic Parth", "parthloveseatingmeat", ui::Alliance::Any, basicParth, true, 0, 0, 0},
-    {"Skills", "Programming skills run.", ui::Alliance::Skills, simpleSkills},
+    {"Five Pin", "ishaan aura", ui::Alliance::Blue, five_pin, true, 0, -64, 180},
+    {"sawp", "sawpy", ui::Alliance::Any, soloAWP},
+    {"dummy route", "6in forward route", ui::Alliance::Any, dummy, true, 0, 0, 0},
+    {"skilly", "parth skills route", ui::Alliance::Skills, simpleSkills},
 };
 
 // picked when the SD card has no saved choice
-const char* defaultAuton = "Five Pin";
+const char* defaultAuton = "dummy route";

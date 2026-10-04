@@ -47,7 +47,7 @@ void initStyles() {
     lv_style_init(&s.panel);
     lv_style_set_bg_color(&s.panel, color::panel());
     lv_style_set_bg_opa(&s.panel, LV_OPA_COVER);
-    lv_style_set_radius(&s.panel, 8);
+    lv_style_set_radius(&s.panel, 6);
     lv_style_set_border_width(&s.panel, 1);
     lv_style_set_border_color(&s.panel, color::line());
     lv_style_set_pad_all(&s.panel, 0);
@@ -63,19 +63,21 @@ void initStyles() {
     lv_style_set_text_font(&s.chip, &lv_font_montserrat_12);
 
     lv_style_init(&s.btn);
-    lv_style_set_bg_color(&s.btn, color::panel2());
+    lv_style_set_bg_color(&s.btn, color::bg());
     lv_style_set_bg_opa(&s.btn, LV_OPA_COVER);
-    lv_style_set_radius(&s.btn, 8);
+    lv_style_set_radius(&s.btn, 6);
     lv_style_set_border_width(&s.btn, 1);
     lv_style_set_border_color(&s.btn, color::line());
     lv_style_set_shadow_width(&s.btn, 0);
     lv_style_set_text_color(&s.btn, color::text());
-    lv_style_set_text_font(&s.btn, &lv_font_montserrat_14);
+    lv_style_set_text_font(&s.btn, &lv_font_montserrat_12);
+    lv_style_set_text_letter_space(&s.btn, 1);
     lv_style_set_pad_all(&s.btn, 2);
 
     lv_style_init(&s.btnPressed);
     lv_style_set_bg_color(&s.btnPressed, color::accent());
     lv_style_set_border_color(&s.btnPressed, color::accent());
+    lv_style_set_text_color(&s.btnPressed, color::bg());
     lv_style_set_transform_width(&s.btnPressed, -2);
     lv_style_set_transform_height(&s.btnPressed, -2);
 
@@ -206,28 +208,17 @@ void fieldToPx(const lv_area_t& a, float x, float y, lv_coord_t& px, lv_coord_t&
 
 void drawField(lv_draw_ctx_t* ctx, const lv_area_t& a) {
     lv_coord_t size = lv_area_get_width(&a);
-    drawRect(ctx, a, lv_color_mix(color::panel(), color::bg(), 100), LV_OPA_COVER, 4);
-
-    // 6x6 foam tiles in a subtle checker
-    for (int r = 0; r < 6; r++) {
-        for (int c = 0; c < 6; c++) {
-            lv_coord_t x1 = a.x1 + c * size / 6, x2 = a.x1 + (c + 1) * size / 6 - 1;
-            lv_coord_t y1 = a.y1 + r * size / 6, y2 = a.y1 + (r + 1) * size / 6 - 1;
-            if ((r + c) % 2) drawRect(ctx, {x1, y1, x2, y2}, lv_color_mix(color::panel2(), color::bg(), 200));
-        }
-    }
+    // just the tile grid in faint hairlines
     for (int i = 1; i < 6; i++) {
         lv_coord_t o = i * size / 6;
-        drawLine(ctx, a.x1 + o, a.y1, a.x1 + o, a.y2, color::line(), 1, LV_OPA_60);
-        drawLine(ctx, a.x1, a.y1 + o, a.x2, a.y1 + o, color::line(), 1, LV_OPA_60);
+        drawLine(ctx, a.x1 + o, a.y1, a.x1 + o, a.y2, color::line(), 1);
+        drawLine(ctx, a.x1, a.y1 + o, a.x2, a.y1 + o, color::line(), 1);
     }
-    // midline
-    lv_coord_t cx = a.x1 + size / 2;
-    drawLine(ctx, cx, a.y1 + 2, cx, a.y2 - 2, color::text(), 1, LV_OPA_30);
-    // alliance walls
-    drawRect(ctx, {a.x1, a.y1, (lv_coord_t)(a.x1 + 2), a.y2}, color::red(), LV_OPA_80);
-    drawRect(ctx, {(lv_coord_t)(a.x2 - 2), a.y1, a.x2, a.y2}, color::blue(), LV_OPA_80);
-    drawFrame(ctx, a, color::line(), 1, 4);
+    // alliance sides as a thin colored edge
+    drawLine(ctx, a.x1, a.y1, a.x1, a.y2, color::red(), 1, LV_OPA_60);
+    drawLine(ctx, a.x2, a.y1, a.x2, a.y2, color::blue(), 1, LV_OPA_60);
+    drawLine(ctx, a.x1, a.y1, a.x2, a.y1, color::muted(), 1, LV_OPA_40);
+    drawLine(ctx, a.x1, a.y2, a.x2, a.y2, color::muted(), 1, LV_OPA_40);
 }
 
 void drawRobot(lv_draw_ctx_t* ctx, const lv_area_t& a, float x, float y, float thetaDeg, float sizeIn,
@@ -251,10 +242,10 @@ void drawRobot(lv_draw_ctx_t* ctx, const lv_area_t& a, float x, float y, float t
     lv_draw_rect_dsc_t d;
     lv_draw_rect_dsc_init(&d);
     d.bg_color = col;
-    d.bg_opa = LV_OPA_50;
+    d.bg_opa = LV_OPA_10;
     lv_draw_polygon(ctx, &d, body, 4);
     for (int i = 0; i < 4; i++) {
-        drawLine(ctx, body[i].x, body[i].y, body[(i + 1) % 4].x, body[(i + 1) % 4].y, col, 2);
+        drawLine(ctx, body[i].x, body[i].y, body[(i + 1) % 4].x, body[(i + 1) % 4].y, col, 1);
     }
 
     // heading arrow
@@ -264,7 +255,7 @@ void drawRobot(lv_draw_ctx_t* ctx, const lv_area_t& a, float x, float y, float t
         {(lv_coord_t)lroundf(cx + fx * (h - 3) + rx * 5), (lv_coord_t)lroundf(cy + fy * (h - 3) + ry * 5)},
         {(lv_coord_t)lroundf(cx + fx * (h - 3) - rx * 5), (lv_coord_t)lroundf(cy + fy * (h - 3) - ry * 5)},
     };
-    d.bg_color = color::text();
+    d.bg_color = col;
     d.bg_opa = LV_OPA_COVER;
     lv_draw_polygon(ctx, &d, arrow, 3);
 }

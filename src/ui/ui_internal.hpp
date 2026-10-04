@@ -89,11 +89,6 @@ void drawRobot(lv_draw_ctx_t* ctx, const lv_area_t& a, float x, float y, float t
 
 struct Snapshot;
 
-// ---------------------------------------------------------------- temperature
-// snapshots hold Celsius (what the motors report); everything on screen goes through these
-float displayTemp(float celsius);
-const char* tempUnit(); // "\xC2\xB0" "F" or "\xC2\xB0" "C"
-
 // ---------------------------------------------------------------- layout (src/ui/layout.cpp)
 enum class Builtin { None, Auton, Field, Motors, Sensors, Graph, Log, Tools };
 enum class WidgetType { Label, Value, Bar, Gauge, Light };
@@ -135,7 +130,8 @@ std::string layoutCode();    // the generated block for layout.cpp
 const char* iconGlyph(const std::string& name);
 const std::vector<const char*>& iconNames();
 const char* widgetTypeName(WidgetType t);
-constexpr lv_coord_t kContentX = 50, kContentY = 30, kContentW = 426, kContentH = 206;
+constexpr lv_coord_t kContentX = 27, kContentY = 2, kContentW = 426, kContentH = 200;
+int tabIndexAtX(int x); // which top-bar tab is under x (-1 = none)
 
 // ---------------------------------------------------------------- data sources (sources.cpp)
 struct SourceValue {
@@ -144,7 +140,6 @@ struct SourceValue {
     float min = 0, max = 100;
     int decimals = 0;
     bool boolean = false;
-    bool temperature = false;
 };
 bool readSource(const std::string& key, const Snapshot& s, SourceValue& out);
 std::vector<std::string> sourceKeys(const Snapshot& s);
@@ -157,7 +152,6 @@ struct MotorStat {
     const char* name;
     int port;           // signed, negative = reversed
     bool ok;
-    float tempC;
     float rpm;
     float watts;
     float amps;
@@ -180,7 +174,7 @@ struct Snapshot {
     float x = 0, y = 0, theta = 0;
 
     // power
-    float batteryPct = 0, batteryV = 0, batteryA = 0, batteryTemp = 0;
+    float batteryPct = 0, batteryV = 0, batteryA = 0;
     bool controllerOk = false;
     int controllerBattery = 0;
     bool sd = false;

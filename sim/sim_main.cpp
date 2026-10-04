@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <fstream>
+#include <string>
 #include <sstream>
 #include <SDL.h>
 #include "editor.hpp"
@@ -73,7 +74,9 @@ static void setMode(bool disabled, bool auton) {
     robot.autonomous = auton;
 }
 
-int main(int, char**) { // SDL needs this exact signature on Windows
+int main(int argc, char** argv) { // SDL needs this exact signature on Windows
+    // --shots: boot, save a screenshot of every tab to sim/screenshots/, then quit
+    bool shots = argc > 1 && std::string(argv[1]) == "--shots";
     setvbuf(stdout, nullptr, _IONBF, 0);
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window* win = SDL_CreateWindow("V5 brain sim", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (W + PW) * SCALE,
@@ -164,7 +167,24 @@ int main(int, char**) { // SDL needs this exact signature on Windows
             booted = true;
             ui::bootComplete();
         }
-        if (booted && now > 1700) editor::restoreState(); // reopen the tab you were on before a rebuild
+        if (booted && now > 1700 && !shots) editor::restoreState(); // reopen the tab you were on before a rebuild
+        if (shots && booted && now > 2500) {
+            static int tab = -1;
+            static uint32_t next = 0;
+            robot.throttle = 0.5f, robot.turn = 0.2f; // something moving on the map
+            if (now >= next) {
+                if (tab >= 0) {
+                    char path[64];
+                    snprintf(path, sizeof path, "screenshots/tab_%d.bmp", tab);
+                    SDL_Surface* sf = SDL_CreateRGBSurfaceWithFormatFrom(fb, W, H, 32, W * 4, SDL_PIXELFORMAT_ARGB8888);
+                    SDL_SaveBMP(sf, path);
+                    SDL_FreeSurface(sf);
+                }
+                if (++tab >= (int)ui::tabs().size()) break;
+                ui::showPage(tab);
+                next = now + 1500;
+            }
+        }
 
         if (dirty || editor::active()) {
             SDL_UpdateTexture(tex, nullptr, fb, W * 4);

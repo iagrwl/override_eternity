@@ -16,10 +16,11 @@ inline pros::MotorGroup right_dt({3, 5,-2}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
                                      &right_dt,
-                                     9.75,    // track width
+                                     11,    // track width
                                      2.75,  // wheel diameter
                                      450,   // rpm
-                                     0);
+                                     2);    // horizontal drift: 2 = all omni, 8 = traction middle wheels
+                                            // (0 makes moveToPose turn but never drive)
 
 // odom sensors
 
@@ -87,5 +88,5 @@ inline pros::MotorGroup lift({1, -9}, pros::MotorGearset::green);
 inline pros::Motor intake(-21, pros::MotorGearset::blue);
 inline pros::Motor clawIntake(-16, pros::MotorGearset::green);
 
-inline pros::Distance leftDistance(16);
-inline pros::Distance rightDistance(1);
+inline pros::Distance leftDistance(7);
+inline pros::Distance rightDistance(12);

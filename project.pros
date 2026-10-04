@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "eternity SCREEN",
+    "project_name": "parth",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -341,7 +341,7 @@
     },
     "upload_options": {
       "description": "iloveeternity",
-      "icon": "X",
+      "icon": "pizza",
       "slot": 3
     },
     "use_early_access": false

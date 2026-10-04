@@ -57,7 +57,6 @@ struct FakeMotor {
     const char* name;
     int port;
     bool drive;
-    float temp;
 };
 struct FakeSensor {
     const char* name;
@@ -70,7 +69,7 @@ static void loadDevices() {
     if (!motors.empty()) return;
     SetupPorts setup;
 #define UI_MOTOR_FAKE(name, var, index) \
-    motors.push_back({name, setup.get(#var, index), motors.size() < 6, 32.0f + motors.size() % 4});
+    motors.push_back({name, setup.get(#var, index), motors.size() < 6});
     UI_MOTORS(UI_MOTOR_FAKE)
 #define UI_SENSOR_FAKE(name, var, type) sensors.push_back({name, setup.get(#var, 0)});
     UI_SENSORS(UI_SENSOR_FAKE)
@@ -118,7 +117,6 @@ void sample(Snapshot& s) {
     s.batteryPct = r.battery;
     s.batteryV = 12.0f + r.battery / 100 * 0.9f;
     s.batteryA = 1 + fabsf(r.throttle) * 9 + fabsf(r.turn) * 4;
-    s.batteryTemp = 30;
     s.controllerOk = true;
     s.controllerBattery = 72;
     s.sd = true;
@@ -128,10 +126,8 @@ void sample(Snapshot& s) {
         FakeMotor& fm = motors[i];
         bool ok = !(i == 7 && r.unplugLift);
         float load = fm.drive ? fabsf(i < 3 ? leftRpm : rightRpm) / 600 : i >= 8 && r.intakeOn ? 0.5f : 0;
-        fm.temp += (load * 6 - (fm.temp - 30) * 0.02f) * dt; // heats with load, cools toward 30C
         MotorStat& m = s.motors[s.motorCount++];
         m.name = fm.name, m.port = fm.port, m.ok = ok;
-        m.tempC = ok ? fm.temp : 0;
         m.rpm = !ok ? 0 : fm.drive ? (i < 3 ? leftRpm : rightRpm) : (i >= 8 && r.intakeOn ? 590 : 0);
         m.watts = ok ? 0.3f + load * 11 : 0;
         m.amps = m.watts / 12;
@@ -214,7 +210,7 @@ void logUnlock() {}
 static void noop() {}
 static const Routine kRoutines[] = {
     {"LATERAL PID", noop}, {"ANGULAR PID", noop}, {"DRIVE FWD", noop}, {"DRIVE BACK", noop},
-    {"TURN CW", noop},     {"TURN CCW", noop},    {"SKILLS", noop},    {"BASIC TEST", noop},
+    {"TURN CW", noop},     {"TURN CCW", noop},    {"SKILLS", noop},    {"DUMMY", noop},
 };
 int testRoutines(const Routine** out) {
     *out = kRoutines;

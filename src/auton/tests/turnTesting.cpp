@@ -1,20 +1,37 @@
 #include "main.h"
 
+// turns 30/60/90/120/180 degrees in one direction, measures how close each one lands,
+// and turns back to 0 between them. results show on the brain's LOG tab.
 void turnTesting(bool isCW) {
     console.clear();
     console.focus();
 
-    int turns[] = {30, 60, 90, 120, 180};
+    while (imu.is_calibrating()) pros::delay(20);
+    chassis.setPose(0, 0, 0); // every turn is measured from a known 0
+    pros::delay(300);
 
-    for (int i = 0; i < 5; i++) {
+    const int turns[] = {30, 60, 90, 120, 180};
+    // force the direction, otherwise 180 can go either way (shortest path)
+    lemlib::AngularDirection dir =
+        isCW ? lemlib::AngularDirection::CW_CLOCKWISE : lemlib::AngularDirection::CCW_COUNTERCLOCKWISE;
+    lemlib::AngularDirection back =
+        isCW ? lemlib::AngularDirection::CCW_COUNTERCLOCKWISE : lemlib::AngularDirection::CW_CLOCKWISE;
 
-        int currTurn = isCW ? turns[i] : -turns[i];
+    console.printf("%s turn test", isCW ? "CW" : "CCW");
+    for (int turn : turns) {
+        float target = isCW ? turn : -turn;
 
-        chassis.turnToHeading(currTurn, 2000, {}, false);
-        pros::delay(1000);
-        // console.printf("%d: %.2f \n", currTurn, chassis.getPose().theta);
-        std::cout << currTurn << ": " << chassis.getPose().theta << std::endl;
+        uint32_t t0 = pros::millis();
+        chassis.turnToHeading(target, 2000, {.direction = dir}, false); // wait until done
+        uint32_t took = pros::millis() - t0;
+        pros::delay(300); // let it settle before measuring
 
-        chassis.turnToHeading(0, 2000);
+        float actual = chassis.getPose().theta;
+        console.printf("%4.0f deg: got %6.1f  err %+5.1f  %lums", target, actual, actual - target, took);
+        std::cout << target << "," << actual << "," << actual - target << "," << took << std::endl;
+
+        chassis.turnToHeading(0, 2000, {.direction = back}, false); // back to 0, and wait for it
+        pros::delay(300);
     }
+    console.printf("done");
 }

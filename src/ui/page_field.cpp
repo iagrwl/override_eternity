@@ -75,7 +75,7 @@ static void onFieldDraw(lv_event_t* e) {
         fieldToPx(a, s_trailX[idx], s_trailY[idx], px, py);
         if (i) {
             lv_opa_t opa = (lv_opa_t)(40 + 215 * i / s_trailCount);
-            drawLine(ctx, px0, py0, px, py, color::accent2(), 2, opa);
+            drawLine(ctx, px0, py0, px, py, color::accent2(), 1, opa);
         }
         px0 = px, py0 = py;
     }
@@ -92,7 +92,7 @@ static void onFieldDraw(lv_event_t* e) {
         drawLine(ctx, tx, ty - 9, tx, ty - 6, color::warn(), 1);
         drawLine(ctx, tx, ty + 6, tx, ty + 9, color::warn(), 1);
     }
-    drawRobot(ctx, a, s.x, s.y, s.theta, config::kRobotSizeIn, color::accent());
+    drawRobot(ctx, a, s.x, s.y, s.theta, config::kRobotSizeIn, color::text());
 }
 
 static void onFieldTap(lv_event_t*) {
@@ -111,7 +111,7 @@ static void onFieldTap(lv_event_t*) {
 static void onZero(lv_event_t*) {
     hw::zeroPose();
     clearTrail();
-    toast(LV_SYMBOL_OK "  pose zeroed", color::good());
+    toast("pose zeroed", color::good());
 }
 static void onWallL(lv_event_t*) { hw::wallReset(false); }
 static void onWallR(lv_event_t*) { hw::wallReset(true); }
@@ -127,51 +127,48 @@ static void buildField(lv_obj_t* parent) {
     lv_obj_add_event_cb(s_field, onFieldDraw, LV_EVENT_DRAW_MAIN, nullptr);
     lv_obj_add_event_cb(s_field, onFieldTap, LV_EVENT_CLICKED, nullptr);
 
-    static const char* caps[3] = {"X  IN", "Y  IN", "HEADING"};
+    // three plain readouts, no boxes
+    static const char* caps[3] = {"X", "Y", "HEADING"};
     for (int i = 0; i < 3; i++) {
-        lv_obj_t* tile = lv_obj_create(parent);
-        lv_obj_remove_style_all(tile);
-        lv_obj_add_style(tile, &styles().panel, 0);
-        lv_obj_clear_flag(tile, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_set_pos(tile, 214 + i * 72, 0);
-        lv_obj_set_size(tile, 68, 56);
-        lv_obj_t* cap = lv_label_create(tile);
+        lv_obj_t* cap = lv_label_create(parent);
         lv_obj_add_style(cap, &styles().caption, 0);
         lv_label_set_text_static(cap, caps[i]);
-        lv_obj_set_pos(cap, 8, 6);
-        s_val[i] = makeLabel(tile, &lv_font_montserrat_20, i == 2 ? color::accent2() : color::text(), "");
-        lv_obj_set_pos(s_val[i], 8, 24);
+        lv_obj_set_pos(cap, 226 + i * 68, 2);
+        s_val[i] = makeLabel(parent, &lv_font_montserrat_20, i == 2 ? color::accent2() : color::text(), "");
+        lv_obj_set_pos(s_val[i], 226 + i * 68, 16);
     }
 
-    s_info = makeLabel(parent, &lv_font_montserrat_12, color::muted(), "");
-    lv_obj_set_pos(s_info, 216, 64);
+    s_info = makeLabel(parent, &lv_font_montserrat_10, color::muted(), "");
+    lv_obj_set_style_text_line_space(s_info, 4, 0);
+    lv_obj_set_pos(s_info, 226, 52);
 
-    s_measure = makeLabel(parent, &lv_font_montserrat_12, color::warn(), "");
-    lv_obj_set_pos(s_measure, 216, 102);
+    s_measure = makeLabel(parent, &lv_font_montserrat_10, color::warn(), "");
+    lv_obj_set_style_text_line_space(s_measure, 4, 0);
+    lv_obj_set_pos(s_measure, 226, 92);
 
     lv_obj_t* b;
-    b = makeButton(parent, LV_SYMBOL_HOME " ZERO", 103, 30, onZero);
-    lv_obj_set_pos(b, 214, 140);
-    b = makeButton(parent, LV_SYMBOL_TRASH " TRAIL", 103, 30, onClear);
-    lv_obj_set_pos(b, 323, 140);
-    b = makeButton(parent, LV_SYMBOL_LEFT " WALL", 103, 30, onWallL);
-    lv_obj_set_pos(b, 214, 176);
-    b = makeButton(parent, "WALL " LV_SYMBOL_RIGHT, 103, 30, onWallR);
-    lv_obj_set_pos(b, 323, 176);
+    b = makeButton(parent, "ZERO", 96, 26, onZero);
+    lv_obj_set_pos(b, 226, 146);
+    b = makeButton(parent, "CLEAR PATH", 96, 26, onClear);
+    lv_obj_set_pos(b, 330, 146);
+    b = makeButton(parent, LV_SYMBOL_LEFT " WALL", 96, 26, onWallL);
+    lv_obj_set_pos(b, 226, 180);
+    b = makeButton(parent, "WALL " LV_SYMBOL_RIGHT, 96, 26, onWallR);
+    lv_obj_set_pos(b, 330, 180);
 }
 
 static void updateField(const Snapshot& s) {
     setTextf(s_val[0], "%.1f", s.x);
     setTextf(s_val[1], "%.1f", s.y);
     setTextf(s_val[2], "%.1f\xC2\xB0", s.theta);
-    setTextf(s_info, "speed  %.1f in/s\ndriven  %.0f in   L %d  R %d rpm", s_speed, s_odometer,
-                          (int)s.leftRpm, (int)s.rightRpm);
+    setTextf(s_info, "%.1f in/s     %.0f in driven\nL %d   R %d rpm", s_speed, s_odometer, (int)s.leftRpm,
+             (int)s.rightRpm);
 
     if (s_hasTarget) {
         float dx = s_tx - s.x, dy = s_ty - s.y;
         float turn = atan2f(dx, dy) * 180.0f / (float)M_PI - s.theta;
         turn = fmodf(turn + 540.0f, 360.0f) - 180.0f;
-        setTextf(s_measure, LV_SYMBOL_GPS " (%.0f, %.0f)\n%.1f in  turn %+.0f\xC2\xB0", s_tx, s_ty,
+        setTextf(s_measure, "TARGET  %.0f, %.0f\n%.1f in   turn %+.0f\xC2\xB0", s_tx, s_ty,
                               hypotf(dx, dy), turn);
     } else {
         lv_label_set_text_static(s_measure, "tap field to measure");

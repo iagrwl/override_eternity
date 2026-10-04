@@ -1,8 +1,8 @@
 // =====================================================================================
 //  DATA SOURCES - the names you can put in a widget's "source" column (layout.cpp)
 //
-//  built in: see kSources below, plus per-motor keys like "motor.LEFT 1.temp" /
-//  ".rpm" / ".watts" (names from src/ui/robot_io.cpp).
+//  built in: see kSources below, plus per-motor keys like "motor.LEFT 1.rpm" /
+//  "motor.LEFT 1.watts" (names from src/ui/devices.hpp).
 //
 //  your own values: call ui::publish("anything", value) from robot code, e.g.
 //      ui::publish("lift.target", 400);
@@ -17,51 +17,39 @@
 
 namespace ui {
 
-float displayTemp(float c) { return config::kFahrenheit ? c * 9 / 5 + 32 : c; }
-const char* tempUnit() { return config::kFahrenheit ? "\xC2\xB0" "F" : "\xC2\xB0" "C"; }
-
-static float maxTemp(const Snapshot& s, int from, int to) {
-    float t = 0;
-    for (int i = from; i < to && i < s.motorCount; i++)
-        if (s.motors[i].ok && s.motors[i].tempC > t) t = s.motors[i].tempC;
-    return t;
-}
 
 struct Source {
     const char* key;
     const char* unit;
     float min, max;
     int decimals;
-    bool boolean, temperature; // temperature sources get converted to F/C and colored hot/cold
+    bool boolean;
     float (*read)(const Snapshot& s);
 };
 
 // clang-format off
 static const Source kSources[] = {
-    // key                 unit       min    max  dec  bool   temp
-    {"pose.x",             "in",      -72,   72,  1, false, false, [](const Snapshot& s) { return s.x; }},
-    {"pose.y",             "in",      -72,   72,  1, false, false, [](const Snapshot& s) { return s.y; }},
-    {"pose.heading",       "\xC2\xB0", 0,   360,  1, false, false, [](const Snapshot& s) { return fmodf(fmodf(s.theta, 360) + 360, 360); }},
-    {"imu.heading",        "\xC2\xB0", 0,   360,  1, false, false, [](const Snapshot& s) { return s.imuHeading; }},
-    {"imu.pitch",          "\xC2\xB0", -45,  45,  1, false, false, [](const Snapshot& s) { return s.imuPitch; }},
-    {"imu.roll",           "\xC2\xB0", -45,  45,  1, false, false, [](const Snapshot& s) { return s.imuRoll; }},
-    {"battery.pct",        "%",        0,   100,  0, false, false, [](const Snapshot& s) { return s.batteryPct; }},
-    {"battery.volts",      "V",       11,    13,  2, false, false, [](const Snapshot& s) { return s.batteryV; }},
-    {"battery.amps",       "A",        0,    20,  1, false, false, [](const Snapshot& s) { return s.batteryA; }},
-    {"battery.temp",       "",        20,    60,  0, false, true,  [](const Snapshot& s) { return s.batteryTemp; }},
-    {"controller.battery", "%",        0,   100,  0, false, false, [](const Snapshot& s) { return (float)s.controllerBattery; }},
-    {"lift.deg",           "\xC2\xB0", 0,   720,  0, false, false, [](const Snapshot& s) { return s.liftDeg; }},
-    {"drive.left_rpm",     "rpm",   -600,   600,  0, false, false, [](const Snapshot& s) { return s.leftRpm; }},
-    {"drive.right_rpm",    "rpm",   -600,   600,  0, false, false, [](const Snapshot& s) { return s.rightRpm; }},
-    {"drive.max_temp",     "",        20,    70,  0, false, true,  [](const Snapshot& s) { return maxTemp(s, 0, 6); }},
-    {"mech.max_temp",      "",        20,    70,  0, false, true,  [](const Snapshot& s) { return maxTemp(s, 6, kMaxMotors); }},
-    {"motors.watts",       "W",        0,   140,  0, false, false, [](const Snapshot& s) { float w = 0; for (int i = 0; i < s.motorCount; i++) w += s.motors[i].watts; return w; }},
-    {"intake.on",          "",         0,     1,  0, true,  false, [](const Snapshot& s) { return strcmp(s.intake, "OFF") ? 1.f : 0.f; }},
-    {"claw.open",          "",         0,     1,  0, true,  false, [](const Snapshot& s) { return s.clawOpen ? 1.f : 0.f; }},
-    {"dist.left_in",       "in",       0,    80,  1, false, false, [](const Snapshot& s) { return s.leftDistMm / 25.4f; }},
-    {"dist.right_in",      "in",       0,    80,  1, false, false, [](const Snapshot& s) { return s.rightDistMm / 25.4f; }},
-    {"devices.problems",   "",         0,     5,  0, false, false, [](const Snapshot& s) { return (float)s.deviceProblems; }},
-    {"comp.connected",     "",         0,     1,  0, true,  false, [](const Snapshot& s) { return s.compConnected ? 1.f : 0.f; }},
+    // key                 unit       min    max  dec  bool
+    {"pose.x",             "in",      -72,   72,  1, false, [](const Snapshot& s) { return s.x; }},
+    {"pose.y",             "in",      -72,   72,  1, false, [](const Snapshot& s) { return s.y; }},
+    {"pose.heading",       "\xC2\xB0", 0,   360,  1, false, [](const Snapshot& s) { return fmodf(fmodf(s.theta, 360) + 360, 360); }},
+    {"imu.heading",        "\xC2\xB0", 0,   360,  1, false, [](const Snapshot& s) { return s.imuHeading; }},
+    {"imu.pitch",          "\xC2\xB0", -45,  45,  1, false, [](const Snapshot& s) { return s.imuPitch; }},
+    {"imu.roll",           "\xC2\xB0", -45,  45,  1, false, [](const Snapshot& s) { return s.imuRoll; }},
+    {"battery.pct",        "%",        0,   100,  0, false, [](const Snapshot& s) { return s.batteryPct; }},
+    {"battery.volts",      "V",       11,    13,  2, false, [](const Snapshot& s) { return s.batteryV; }},
+    {"battery.amps",       "A",        0,    20,  1, false, [](const Snapshot& s) { return s.batteryA; }},
+    {"controller.battery", "%",        0,   100,  0, false, [](const Snapshot& s) { return (float)s.controllerBattery; }},
+    {"lift.deg",           "\xC2\xB0", 0,   720,  0, false, [](const Snapshot& s) { return s.liftDeg; }},
+    {"drive.left_rpm",     "rpm",   -600,   600,  0, false, [](const Snapshot& s) { return s.leftRpm; }},
+    {"drive.right_rpm",    "rpm",   -600,   600,  0, false, [](const Snapshot& s) { return s.rightRpm; }},
+    {"motors.watts",       "W",        0,   140,  0, false, [](const Snapshot& s) { float w = 0; for (int i = 0; i < s.motorCount; i++) w += s.motors[i].watts; return w; }},
+    {"intake.on",          "",         0,     1,  0, true,  [](const Snapshot& s) { return strcmp(s.intake, "OFF") ? 1.f : 0.f; }},
+    {"claw.open",          "",         0,     1,  0, true,  [](const Snapshot& s) { return s.clawOpen ? 1.f : 0.f; }},
+    {"dist.left_in",       "in",       0,    80,  1, false, [](const Snapshot& s) { return s.leftDistMm / 25.4f; }},
+    {"dist.right_in",      "in",       0,    80,  1, false, [](const Snapshot& s) { return s.rightDistMm / 25.4f; }},
+    {"devices.problems",   "",         0,     5,  0, false, [](const Snapshot& s) { return (float)s.deviceProblems; }},
+    {"comp.connected",     "",         0,     1,  0, true,  [](const Snapshot& s) { return s.compConnected ? 1.f : 0.f; }},
 };
 // clang-format on
 
@@ -91,7 +79,6 @@ static SourceValue fromSource(const Source& src, const Snapshot& s) {
     v.min = src.min, v.max = src.max;
     v.decimals = src.decimals;
     v.boolean = src.boolean;
-    v.temperature = src.temperature;
     return v;
 }
 
@@ -105,7 +92,7 @@ bool readSource(const std::string& key, const Snapshot& s, SourceValue& out) {
         }
     }
 
-    // motor.<NAME>.temp / .rpm / .watts
+    // motor.<NAME>.rpm / .watts
     if (!found && key.rfind("motor.", 0) == 0) {
         size_t dot = key.rfind('.');
         std::string name = key.substr(6, dot - 6), field = key.substr(dot + 1);
@@ -114,8 +101,7 @@ bool readSource(const std::string& key, const Snapshot& s, SourceValue& out) {
             const MotorStat& m = s.motors[i];
             out = SourceValue();
             found = true;
-            if (field == "temp") out.value = m.tempC, out.min = 20, out.max = 70, out.temperature = true;
-            else if (field == "rpm") out.value = m.rpm, out.unit = "rpm", out.min = -600, out.max = 600;
+            if (field == "rpm") out.value = m.rpm, out.unit = "rpm", out.min = -600, out.max = 600;
             else if (field == "watts") out.value = m.watts, out.unit = "W", out.max = 13, out.decimals = 1;
             else found = false;
         }
@@ -135,11 +121,6 @@ bool readSource(const std::string& key, const Snapshot& s, SourceValue& out) {
     }
     if (!found) return false;
 
-    if (out.temperature) {
-        out.value = displayTemp(out.value);
-        out.min = displayTemp(out.min), out.max = displayTemp(out.max);
-        out.unit = tempUnit();
-    }
     return true;
 }
 
@@ -147,8 +128,8 @@ std::vector<std::string> sourceKeys(const Snapshot& s) {
     std::vector<std::string> keys;
     for (const Source& src : kSources) keys.push_back(src.key);
     for (int i = 0; i < s.motorCount; i++) {
-        keys.push_back(std::string("motor.") + s.motors[i].name + ".temp");
         keys.push_back(std::string("motor.") + s.motors[i].name + ".rpm");
+        keys.push_back(std::string("motor.") + s.motors[i].name + ".watts");
     }
     hw::logLock();
     for (int i = 0; i < s_pubCount; i++) keys.push_back(s_pub[i].key);

@@ -29,9 +29,9 @@ static lv_coord_t textW(const char* txt, const lv_font_t* f) {
     return lv_txt_get_width(txt, strlen(txt), f, 0, LV_TEXT_FLAG_NONE);
 }
 
+// minimal: no boxes, just a hairline along the bottom of each widget
 static void panel(lv_draw_ctx_t* ctx, const lv_area_t& a) {
-    drawRect(ctx, a, color::panel(), LV_OPA_COVER, 8);
-    drawFrame(ctx, a, color::line(), 1, 8);
+    drawLine(ctx, a.x1, a.y2, a.x2, a.y2, color::line(), 1);
 }
 
 static void formatValue(const SourceValue& v, bool ok, char* buf, int len) {
@@ -53,9 +53,7 @@ static void onWidgetDraw(lv_event_t* e) {
     SourceValue v;
     bool ok = !w.source.empty() && readSource(w.source, snapshot(), v);
     lv_color_t col = w.color ? lv_color_hex(w.color) : color::accent();
-    lv_color_t valueCol = !ok ? color::dim()
-                          : v.temperature ? heatColor(v.value, config::kMotorTempCool, config::kMotorTempHot)
-                                          : color::text();
+    lv_color_t valueCol = ok ? color::text() : color::dim();
     char val[24];
     formatValue(v, ok, val, sizeof val);
     float frac = ok && v.max > v.min ? (v.value - v.min) / (v.max - v.min) : 0;
@@ -71,13 +69,13 @@ static void onWidgetDraw(lv_event_t* e) {
         }
         case WidgetType::Value: {
             panel(ctx, a);
-            drawText(ctx, a.x1 + 8, a.y1 + 6, W - 16, caption, &lv_font_montserrat_10, color::muted());
+            drawText(ctx, a.x1, a.y1 + 2, W, caption, &lv_font_montserrat_10, color::muted());
             lv_coord_t unitW = ok && v.unit[0] ? textW(v.unit, &lv_font_montserrat_12) + 3 : 0;
-            const lv_font_t* f = fitFont(val, W - 16 - unitW, H - 24);
-            lv_coord_t y = a.y1 + 20 + (H - 24 - lv_font_get_line_height(f)) / 2;
-            drawText(ctx, a.x1 + 8, y, W - 16, val, f, w.color && !v.temperature && ok ? col : valueCol);
+            const lv_font_t* f = fitFont(val, W - unitW, H - 20);
+            lv_coord_t y = a.y1 + 16 + (H - 20 - lv_font_get_line_height(f)) / 2;
+            drawText(ctx, a.x1, y, W, val, f, w.color && ok ? col : valueCol);
             if (unitW) {
-                lv_coord_t x = a.x1 + 8 + textW(val, f) + 3;
+                lv_coord_t x = a.x1 + textW(val, f) + 3;
                 drawText(ctx, x, y + lv_font_get_line_height(f) - 17, unitW, v.unit, &lv_font_montserrat_12,
                          color::muted());
             }
@@ -85,22 +83,22 @@ static void onWidgetDraw(lv_event_t* e) {
         }
         case WidgetType::Bar: {
             panel(ctx, a);
-            drawText(ctx, a.x1 + 8, a.y1 + 6, W - 16, caption, &lv_font_montserrat_10, color::muted());
+            drawText(ctx, a.x1, a.y1 + 2, W, caption, &lv_font_montserrat_10, color::muted());
             char txt[40];
             snprintf(txt, sizeof txt, "%s %s", val, ok ? v.unit : "");
-            drawText(ctx, a.x1 + 8, a.y1 + 4, W - 16, txt, &lv_font_montserrat_12, valueCol, LV_TEXT_ALIGN_RIGHT);
-            lv_area_t track = area(a.x1 + 8, a.y2 - 13, W - 16, 6);
-            drawRect(ctx, track, color::panel2(), LV_OPA_COVER, 3);
-            lv_color_t fill = v.temperature ? valueCol : col;
+            drawText(ctx, a.x1, a.y1, W, txt, &lv_font_montserrat_12, valueCol, LV_TEXT_ALIGN_RIGHT);
+            lv_area_t track = area(a.x1, a.y2 - 8, W, 3);
+            drawRect(ctx, track, color::panel2(), LV_OPA_COVER, 1);
+            lv_color_t fill = col;
             if (ok && v.min < 0 && v.max > 0) { // signed range: fill out from the middle
                 float zero = -v.min / (v.max - v.min);
-                lv_coord_t x0 = track.x1 + (lv_coord_t)(zero * (W - 16)), x1 = track.x1 + (lv_coord_t)(frac * (W - 16));
+                lv_coord_t x0 = track.x1 + (lv_coord_t)(zero * W), x1 = track.x1 + (lv_coord_t)(frac * W);
                 if (x1 < x0) std::swap(x0, x1);
                 drawRect(ctx, {x0, track.y1, (lv_coord_t)LV_MAX(x1, x0 + 2), track.y2}, fill, LV_OPA_COVER, 3);
-                drawLine(ctx, track.x1 + (lv_coord_t)(zero * (W - 16)), track.y1 - 3,
-                         track.x1 + (lv_coord_t)(zero * (W - 16)), track.y2 + 3, color::muted(), 1);
+                drawLine(ctx, track.x1 + (lv_coord_t)(zero * W), track.y1 - 3,
+                         track.x1 + (lv_coord_t)(zero * W), track.y2 + 3, color::muted(), 1);
             } else if (ok) {
-                drawRect(ctx, {track.x1, track.y1, (lv_coord_t)(track.x1 + LV_MAX(6, frac * (W - 16))), track.y2},
+                drawRect(ctx, {track.x1, track.y1, (lv_coord_t)(track.x1 + LV_MAX(6, frac * W)), track.y2},
                          fill, LV_OPA_COVER, 3);
             }
             break;
@@ -111,11 +109,11 @@ static void onWidgetDraw(lv_event_t* e) {
             if (r < 8) r = 8;
             lv_coord_t cx = a.x1 + W / 2, cy = a.y1 + 6 + r + 4;
             lv_coord_t thick = LV_MAX(4, r / 5);
-            drawArc(ctx, cx, cy, r, 135, 45, color::panel2(), thick);
-            if (ok) drawArc(ctx, cx, cy, r, 135, (uint16_t)(135 + 270 * LV_MAX(frac, 0.02f)) % 360,
-                            v.temperature ? valueCol : col, thick);
+            thick = 2;
+            drawArc(ctx, cx, cy, r, 135, 45, color::line(), thick);
+            if (ok) drawArc(ctx, cx, cy, r, 135, (uint16_t)(135 + 270 * LV_MAX(frac, 0.02f)) % 360, col, thick);
             char txt[32];
-            snprintf(txt, sizeof txt, "%s%s", val, ok && v.temperature ? "\xC2\xB0" : "");
+            snprintf(txt, sizeof txt, "%s", val);
             const lv_font_t* f = fitFont(txt, r * 2 - thick * 2 - 4, r);
             drawText(ctx, cx - r, cy - lv_font_get_line_height(f) / 2, r * 2, txt, f, valueCol, LV_TEXT_ALIGN_CENTER);
             drawText(ctx, a.x1 + 4, a.y2 - 16, W - 8, caption, &lv_font_montserrat_10, color::muted(),
@@ -126,10 +124,10 @@ static void onWidgetDraw(lv_event_t* e) {
             panel(ctx, a);
             bool on = ok && v.value > 0.5f;
             lv_coord_t cy = a.y1 + H / 2, cx = a.x1 + 14;
-            if (on) drawRect(ctx, area(cx - 9, cy - 9, 18, 18), col, LV_OPA_30, 9);
-            drawRect(ctx, area(cx - 5, cy - 5, 10, 10), on ? col : color::panel2(), LV_OPA_COVER, 5);
-            const lv_font_t* f = fitFont(caption, W - 36, LV_MIN(H - 4, 16));
-            drawText(ctx, a.x1 + 28, cy - lv_font_get_line_height(f) / 2, W - 36, caption, f,
+            cx = a.x1 + 4;
+            drawRect(ctx, area(cx - 4, cy - 4, 8, 8), on ? col : color::line(), LV_OPA_COVER, 4);
+            const lv_font_t* f = fitFont(caption, W - 20, LV_MIN(H - 4, 16));
+            drawText(ctx, a.x1 + 16, cy - lv_font_get_line_height(f) / 2, W - 20, caption, f,
                      on ? color::text() : color::muted());
             break;
         }

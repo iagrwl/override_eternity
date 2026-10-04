@@ -37,13 +37,13 @@ static const PaletteItem kPalette[] = {
     {"Label", WidgetType::Label, "LABEL", "", 140, 24},
     {"Value", WidgetType::Value, "VALUE", "battery.pct", 104, 62},
     {"Bar", WidgetType::Bar, "BAR", "drive.left_rpm", 206, 50},
-    {"Gauge", WidgetType::Gauge, "GAUGE", "drive.max_temp", 104, 104},
+    {"Gauge", WidgetType::Gauge, "GAUGE", "battery.pct", 104, 104},
     {"Light", WidgetType::Light, "LIGHT", "claw.open", 100, 28},
     {nullptr, WidgetType::Label, "PRESETS", "", 0, 0},
     {"Battery %", WidgetType::Value, "BATTERY", "battery.pct", 104, 62},
     {"Heading", WidgetType::Value, "HEADING", "pose.heading", 104, 62},
     {"Pose X / Y", WidgetType::Value, "X", "pose.x", 90, 56},
-    {"Drive temp", WidgetType::Gauge, "DRIVE TEMP", "drive.max_temp", 104, 104},
+    {"Battery bar", WidgetType::Bar, "BATTERY", "battery.pct", 206, 40},
     {"Lift angle", WidgetType::Value, "LIFT", "lift.deg", 100, 62},
     {"Claw", WidgetType::Light, "CLAW OPEN", "claw.open", 110, 28},
     {"Intake", WidgetType::Light, "INTAKE", "intake.on", 110, 28},
@@ -66,7 +66,7 @@ struct TabEntry {
     int index; // position on the rail, -1 = hidden
 };
 static const TabDef kBuiltins[] = {
-    {"AUTON", "LIST", Builtin::Auton},       {"FIELD", "GPS", Builtin::Field},  {"MOTORS", "CHARGE", Builtin::Motors},
+    {"AUTON", "LIST", Builtin::Auton},       {"MOTORS", "CHARGE", Builtin::Motors},
     {"SENSORS", "EYE", Builtin::Sensors},    {"GRAPH", "SHUFFLE", Builtin::Graph}, {"LOG", "FILE", Builtin::Log},
     {"TOOLS", "SETTINGS", Builtin::Tools},
 };
@@ -106,7 +106,7 @@ static int paletteHit(int x, int y) {
 static const char* kLayoutFile = "../src/ui/layout.cpp";
 static const char* kStateFile = ".cache/sim_state.txt";
 
-static const uint32_t kColors[] = {0, 0x22D3EE, 0x8B5CF6, 0x22C55E, 0xF59E0B, 0xEF4444, 0x3B82F6, 0xE8ECF4, 0x7D879C};
+static const uint32_t kColors[] = {0, 0x7DD3FC, 0x4ADE80, 0xFBBF24, 0xF87171, 0x60A5FA, 0xA78BFA, 0x71717A};
 static constexpr int kColorCount = sizeof(kColors) / sizeof(kColors[0]);
 
 static Tab* curTab() {
@@ -178,7 +178,7 @@ void toggle() {
         printf("\nEDIT MODE\n"
                "  click/drag widget = move   drag its corner = resize   arrows = nudge (shift = 10px)\n"
                "  a add widget  c copy  del remove  t type  d/D data source  k color  enter rename\n"
-               "  n new tab  x remove tab (twice)  , . move tab  i tab icon  enter (nothing selected) rename tab\n"
+               "  n new tab  x remove tab (twice)  , . or drag a tab name to move it  enter (nothing selected) rename tab\n"
                "  w save to layout.cpp   e leave edit mode (auto-saves)\n\n");
     }
 }
@@ -438,13 +438,8 @@ static void clickTabEntry(int row) {
 
 // rail reorder: drag a rail icon up/down in edit mode
 static int s_railDrag = -1;
-static int railIndexAt(int y) {
-    int n = tabs().size();
-    if (n == 0 || y < kContentY || y >= kContentY + kContentH) return -1;
-    float pitch = (kContentH + 3) / (float)n;
-    int i = (int)((y - kContentY) / pitch);
-    return i < n ? i : n - 1;
-}
+// tabs live in the top bar now: drag a tab name left/right to reorder
+static int railIndexAt(int x) { return tabIndexAtX(x); }
 
 static void dropPaletteItem(int x, int y) {
     const PaletteItem& p = kPalette[s_paletteDrag];
@@ -482,12 +477,12 @@ bool handle(const SDL_Event& e, int mx, int my) {
         return true;
     }
     // edit mode: drag rail icons to reorder tabs
-    if (s_active && e.type == SDL_MOUSEBUTTONDOWN && e.button.x < kContentX - 4) {
-        s_railDrag = railIndexAt(e.button.y);
+    if (s_active && e.type == SDL_MOUSEBUTTONDOWN && e.button.y > kContentY + kContentH) {
+        s_railDrag = railIndexAt(e.button.x);
         return false; // still let LVGL switch to the tab
     }
     if (s_railDrag >= 0 && e.type == SDL_MOUSEBUTTONUP) {
-        int to = railIndexAt(e.button.y), from = s_railDrag;
+        int to = railIndexAt(e.button.x), from = s_railDrag;
         s_railDrag = -1;
         if (to >= 0 && to != from) {
             Tab t = tabs()[from];
@@ -521,7 +516,7 @@ bool handle(const SDL_Event& e, int mx, int my) {
         int y = e.type == SDL_MOUSEMOTION ? e.motion.y : e.button.y;
         (void)mx, (void)my;
         // rail + status bar + built-in pages still work normally (switch tabs while editing)
-        if (!onCustomTab() || x < kContentX - 2 || y < kContentY - 2) {
+        if (!onCustomTab() || x < kContentX - 2 || y > kContentY + kContentH) {
             if (e.type == SDL_MOUSEBUTTONDOWN) s_sel = -1;
             return false;
         }
@@ -572,7 +567,7 @@ void buildPalette() {
     lv_obj_t* scr = lv_obj_create(nullptr);
     lv_obj_remove_style_all(scr);
     lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_color(scr, lv_color_hex(0x0B0E16), 0);
+    lv_obj_set_style_bg_color(scr, color::panel(), 0);
     lv_obj_set_style_border_side(scr, LV_BORDER_SIDE_LEFT, 0);
     lv_obj_set_style_border_width(scr, 1, 0);
     lv_obj_set_style_border_color(scr, color::line(), 0);
@@ -628,11 +623,10 @@ void drawOverlay(SDL_Renderer* ren) {
         SDL_RenderFillRect(ren, &row);
     }
     if (s_railDrag >= 0) { // where the dragged tab will land
-        int to = railIndexAt(s_my);
-        float pitch = (kContentH + 3) / (float)tabs().size();
-        SDL_SetRenderDrawColor(ren, 34, 211, 238, 255);
-        SDL_Rect bar = {2, kContentY + (int)(to * pitch) - 2, 44, 2};
-        if (to >= 0 && to != s_railDrag) SDL_RenderFillRect(ren, &bar);
+        int to = railIndexAt(s_my > kContentY + kContentH ? s_mx : -1);
+        SDL_SetRenderDrawColor(ren, 125, 211, 252, 255);
+        SDL_Rect mark = {s_mx - 1, kContentY + kContentH + 6, 2, 26};
+        if (to >= 0 && to != s_railDrag) SDL_RenderFillRect(ren, &mark);
     }
     if (s_paletteDrag >= 0) { // ghost of the widget being dragged
         const PaletteItem& p = kPalette[s_paletteDrag];

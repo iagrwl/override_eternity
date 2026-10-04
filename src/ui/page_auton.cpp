@@ -1,4 +1,4 @@
-// AUTON page: card grid of routines + detail panel with a start-pose preview.
+// AUTON page: plain list of routines on the left, the picked one big on the right.
 
 #include <cstdio>
 #include "ui_internal.hpp"
@@ -7,23 +7,24 @@ namespace ui {
 
 static lv_obj_t* s_list = nullptr;
 static lv_obj_t* s_name = nullptr;
-static lv_obj_t* s_chip = nullptr;
-static lv_obj_t* s_chipLabel = nullptr;
+static lv_obj_t* s_side = nullptr;
 static lv_obj_t* s_desc = nullptr;
-static lv_obj_t* s_preview = nullptr;
-static lv_obj_t* s_startLabel = nullptr;
 static lv_obj_t* s_lock = nullptr;
 static int s_shown = -2;
 static bool s_wasLocked = false;
 
-static void styleCard(lv_obj_t* card, bool selected) {
-    lv_obj_set_style_bg_color(card, selected ? color::accentDim() : color::panel(), 0);
-    lv_obj_set_style_outline_width(card, selected ? 2 : 0, 0);
+static constexpr lv_coord_t kRowH = 30;
+
+static void styleRow(lv_obj_t* row, bool selected, bool dim) {
+    lv_obj_set_style_border_color(row, selected ? color::text() : color::bg(), 0);
+    lv_obj_t* label = lv_obj_get_child(row, 1);
+    lv_obj_set_style_text_color(label, selected ? color::text() : color::muted(), 0);
+    lv_obj_set_style_opa(row, dim ? LV_OPA_40 : LV_OPA_COVER, 0);
 }
 
-static void onCard(lv_event_t* e) {
+static void onRow(lv_event_t* e) {
     if (selectionLocked()) {
-        toast(LV_SYMBOL_CLOSE "  locked during match", color::bad());
+        toast("locked during the match", color::bad());
         return;
     }
     selectAuton((int)(intptr_t)lv_event_get_user_data(e));
@@ -43,104 +44,74 @@ static void onTestRun(lv_event_t*) {
     }
     if (hw::routineRunning()) return;
     static char body[96];
-    snprintf(body, sizeof body, "\"%s\" will run on the brain. Robot will move. Stand clear.", a->name);
-    confirm("Run auton?", body, LV_SYMBOL_PLAY " RUN", runSelected);
-}
-
-static void onPreviewDraw(lv_event_t* e) {
-    lv_obj_t* obj = lv_event_get_target(e);
-    lv_draw_ctx_t* ctx = lv_event_get_draw_ctx(e);
-    lv_area_t a;
-    lv_obj_get_coords(obj, &a);
-    drawField(ctx, a);
-    const Auton* au = selectedAuton();
-    if (au && au->hasStart) drawRobot(ctx, a, au->startX, au->startY, au->startTheta, 18, allianceColor(au->alliance));
+    snprintf(body, sizeof body, "%s will run now. The robot will move.", a->name);
+    confirm("Run auton?", body, "RUN", runSelected);
 }
 
 static void buildAuton(lv_obj_t* parent) {
     s_shown = -2;
     const auto& list = autons();
 
-    // ---- card grid
-    s_list = makeBox(parent, 0, 0, 270, 206);
+    lv_obj_t* cap = lv_label_create(parent);
+    lv_obj_add_style(cap, &styles().caption, 0);
+    lv_label_set_text_static(cap, "AUTONOMOUS");
+    lv_obj_set_pos(cap, 0, 2);
+
+    s_lock = makeLabel(parent, &lv_font_montserrat_10, color::warn(), "LOCKED");
+    lv_obj_set_pos(s_lock, 140, 2);
+
+    s_list = makeBox(parent, 0, 20, 196, 180);
     lv_obj_add_flag(s_list, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_scroll_dir(s_list, LV_DIR_VER);
     lv_obj_set_scrollbar_mode(s_list, LV_SCROLLBAR_MODE_ACTIVE);
-    lv_obj_set_flex_flow(s_list, LV_FLEX_FLOW_ROW_WRAP);
-    lv_obj_set_style_pad_row(s_list, 6, 0);
-    lv_obj_set_style_pad_column(s_list, 6, 0);
-    lv_obj_set_style_pad_all(s_list, 2, 0);
+    lv_obj_set_flex_flow(s_list, LV_FLEX_FLOW_COLUMN);
 
     for (size_t i = 0; i < list.size(); i++) {
         const Auton& a = list[i];
-        lv_obj_t* card = lv_obj_create(s_list);
-        lv_obj_remove_style_all(card);
-        lv_obj_add_style(card, &styles().panel, 0);
-        lv_obj_add_style(card, &styles().btnPressed, LV_STATE_PRESSED);
-        lv_obj_set_style_outline_color(card, color::accent(), 0);
-        lv_obj_set_style_outline_pad(card, 0, 0);
-        lv_obj_set_style_border_side(card, LV_BORDER_SIDE_LEFT, 0);
-        lv_obj_set_style_border_width(card, 4, 0);
-        lv_obj_set_style_border_color(card, allianceColor(a.alliance), 0);
-        lv_obj_set_size(card, 127, 52);
-        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_add_flag(card, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_add_event_cb(card, onCard, LV_EVENT_CLICKED, (void*)(intptr_t)i);
+        lv_obj_t* row = lv_obj_create(s_list);
+        lv_obj_remove_style_all(row);
+        lv_obj_set_size(row, 196, kRowH);
+        lv_obj_set_style_border_side(row, LV_BORDER_SIDE_LEFT, 0);
+        lv_obj_set_style_border_width(row, 2, 0);
+        lv_obj_set_style_bg_color(row, color::panel2(), LV_STATE_PRESSED);
+        lv_obj_set_style_bg_opa(row, LV_OPA_COVER, LV_STATE_PRESSED);
+        lv_obj_clear_flag(row, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_flag(row, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_event_cb(row, onRow, LV_EVENT_CLICKED, (void*)(intptr_t)i);
 
-        lv_obj_t* name = makeLabel(card, &lv_font_montserrat_14, color::text(), a.name);
+        lv_obj_t* dot = makeBox(row, 12, kRowH / 2 - 3, 6, 6);
+        lv_obj_set_style_radius(dot, 3, 0);
+        lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+        lv_obj_set_style_bg_color(dot, allianceColor(a.alliance), 0);
+
+        lv_obj_t* name = makeLabel(row, &lv_font_montserrat_14, color::muted(), a.name);
         lv_label_set_long_mode(name, LV_LABEL_LONG_DOT);
-        lv_obj_set_width(name, 110);
-        lv_obj_set_pos(name, 10, 8);
-
-        lv_obj_t* tag = makeLabel(card, &lv_font_montserrat_10, allianceColor(a.alliance), allianceName(a.alliance));
-        lv_obj_set_style_text_letter_space(tag, 1, 0);
-        lv_obj_set_pos(tag, 10, 30);
-        styleCard(card, (int)i == selectedIndex());
+        lv_obj_set_width(name, 160);
+        lv_obj_align(name, LV_ALIGN_LEFT_MID, 28, 0);
     }
 
-    // ---- detail panel
-    lv_obj_t* panel = lv_obj_create(parent);
-    lv_obj_remove_style_all(panel);
-    lv_obj_add_style(panel, &styles().panel, 0);
-    lv_obj_clear_flag(panel, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_pos(panel, 276, 2);
-    lv_obj_set_size(panel, 150, 204);
+    // hairline between the list and the detail side
+    lv_obj_t* div = makeBox(parent, 210, 4, 1, 192);
+    lv_obj_set_style_bg_opa(div, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_color(div, color::line(), 0);
 
-    lv_obj_t* cap = lv_label_create(panel);
-    lv_obj_add_style(cap, &styles().caption, 0);
-    lv_label_set_text_static(cap, "SELECTED AUTON");
-    lv_obj_set_pos(cap, 10, 8);
+    s_side = makeLabel(parent, &lv_font_montserrat_10, color::muted(), "");
+    lv_obj_set_style_text_letter_space(s_side, 2, 0);
+    lv_obj_set_pos(s_side, 226, 2);
 
-    s_lock = makeLabel(panel, &lv_font_montserrat_12, color::warn(), LV_SYMBOL_EYE_CLOSE);
-    lv_obj_set_pos(s_lock, 128, 6);
-
-    s_name = makeLabel(panel, &lv_font_montserrat_18, color::text(), "");
+    s_name = makeLabel(parent, &lv_font_montserrat_24, color::text(), "");
     lv_label_set_long_mode(s_name, LV_LABEL_LONG_DOT);
-    lv_obj_set_width(s_name, 132);
-    lv_obj_set_pos(s_name, 10, 22);
+    lv_obj_set_width(s_name, 200);
+    lv_obj_set_pos(s_name, 226, 18);
 
-    s_chip = lv_obj_create(panel);
-    lv_obj_remove_style_all(s_chip);
-    lv_obj_add_style(s_chip, &styles().chip, 0);
-    lv_obj_set_size(s_chip, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_pos(s_chip, 10, 46);
-    s_chipLabel = makeLabel(s_chip, &lv_font_montserrat_10, lv_color_white(), "");
-
-    s_desc = makeLabel(panel, &lv_font_montserrat_12, color::muted(), "");
+    s_desc = makeLabel(parent, &lv_font_montserrat_12, color::muted(), "");
     lv_label_set_long_mode(s_desc, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(s_desc, 132);
-    lv_obj_set_height(s_desc, 46);
-    lv_obj_set_pos(s_desc, 10, 66);
+    lv_obj_set_size(s_desc, 200, 110);
+    lv_obj_set_pos(s_desc, 226, 52);
 
-    s_preview = makeBox(panel, 10, 114, 54, 54);
-    lv_obj_add_event_cb(s_preview, onPreviewDraw, LV_EVENT_DRAW_MAIN, nullptr);
 
-    s_startLabel = makeLabel(panel, &lv_font_montserrat_10, color::muted(), "");
-    lv_obj_set_pos(s_startLabel, 72, 118);
-
-    lv_obj_t* run = makeButton(panel, LV_SYMBOL_PLAY "  TEST RUN", 130, 26, onTestRun);
-    lv_obj_set_style_text_font(run, &lv_font_montserrat_12, 0);
-    lv_obj_set_pos(run, 10, 172);
+    lv_obj_t* run = makeButton(parent, "TEST RUN", 200, 26, onTestRun);
+    lv_obj_set_pos(run, 226, 172);
 }
 
 static void updateAuton(const Snapshot&) {
@@ -148,13 +119,8 @@ static void updateAuton(const Snapshot&) {
     int sel = selectedIndex();
     if (sel == s_shown && locked == s_wasLocked) return;
 
-    // restyle the cards
     uint32_t n = lv_obj_get_child_cnt(s_list);
-    for (uint32_t i = 0; i < n; i++) {
-        lv_obj_t* card = lv_obj_get_child(s_list, i);
-        styleCard(card, (int)i == sel);
-        lv_obj_set_style_opa(card, locked && (int)i != sel ? LV_OPA_40 : LV_OPA_COVER, 0);
-    }
+    for (uint32_t i = 0; i < n; i++) styleRow(lv_obj_get_child(s_list, i), (int)i == sel, locked && (int)i != sel);
     if (sel != s_shown && sel >= 0) lv_obj_scroll_to_view(lv_obj_get_child(s_list, sel), LV_ANIM_ON);
 
     s_shown = sel;
@@ -168,17 +134,12 @@ static void updateAuton(const Snapshot&) {
         return;
     }
     lv_label_set_text_static(s_name, a->name);
-    lv_label_set_text_static(s_chipLabel, allianceName(a->alliance));
-    lv_obj_set_style_bg_color(s_chip, allianceColor(a->alliance), 0);
+    lv_label_set_text_static(s_side, allianceName(a->alliance));
+    lv_obj_set_style_text_color(s_side, allianceColor(a->alliance), 0);
     lv_label_set_text_static(s_desc, a->description ? a->description : "");
-    if (a->hasStart)
-        setTextf(s_startLabel, "START\nx  %.0f\ny  %.0f\n" "\xC2\xB0" "  %.0f", a->startX, a->startY,
-                              a->startTheta);
-    else lv_label_set_text_static(s_startLabel, "START\nnot set");
-    lv_obj_invalidate(s_preview);
 }
 
-static void teardownAuton() { s_list = s_name = s_chip = s_chipLabel = s_desc = s_preview = s_startLabel = s_lock = nullptr; }
+static void teardownAuton() { s_list = s_name = s_side = s_desc = s_lock = nullptr; }
 
 const Page pageAuton = {"AUTON", LV_SYMBOL_LIST, buildAuton, updateAuton, teardownAuton};
 

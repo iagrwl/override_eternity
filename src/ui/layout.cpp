@@ -21,7 +21,6 @@ namespace ui {
 const TabDef kLayoutTabs[] = {
     {"AUTON", "LIST", Builtin::Auton},
     {"HOME", "HOME", Builtin::None},
-    {"FIELD", "GPS", Builtin::Field},
     {"SENSORS", "EYE", Builtin::Sensors},
     {"LOG", "FILE", Builtin::Log},
     {"TOOLS", "SETTINGS", Builtin::Tools},
@@ -31,17 +30,14 @@ const int kLayoutTabCount = sizeof(kLayoutTabs) / sizeof(kLayoutTabs[0]);
 
 const WidgetDef kLayoutWidgets[] = {
     // tab, type, text, source, x, y, w, h, color (0 = theme accent)
-    {"HOME", WidgetType::Value, "BATTERY", "battery.pct", 104, 110, 90, 56, 0},
-    {"HOME", WidgetType::Value, "HEADING", "pose.heading", 322, 0, 104, 62, 0x22D3EE},
-    {"HOME", WidgetType::Value, "LIFT", "lift.deg", 238, 0, 84, 62, 0},
-    {"HOME", WidgetType::Light, "CLAW OPEN", "claw.open", 294, 172, 132, 24, 0xF59E0B},
-    {"HOME", WidgetType::Light, "INTAKE", "intake.on", 352, 152, 74, 20, 0x22C55E},
-    {"HOME", WidgetType::Gauge, "DRIVE TEMP", "drive.max_temp", 0, 102, 104, 104, 0},
-    {"HOME", WidgetType::Gauge, "MECH TEMP", "mech.max_temp", 0, 0, 104, 104, 0},
-    {"HOME", WidgetType::Bar, "LEFT DRIVE", "drive.left_rpm", 282, 72, 144, 32, 0x22D3EE},
-    {"HOME", WidgetType::Bar, "RIGHT DRIVE", "drive.right_rpm", 282, 110, 144, 34, 0x8B5CF6},
-    {"HOME", WidgetType::Value, "X", "pose.x", 104, 0, 90, 56, 0},
-    {"HOME", WidgetType::Value, "X", "pose.x", 104, 54, 90, 56, 0},
+    {"HOME", WidgetType::Value, "BATTERY", "battery.pct", 0, 0, 130, 72, 0},
+    {"HOME", WidgetType::Value, "HEADING", "pose.heading", 148, 0, 130, 72, 0x7DD3FC},
+    {"HOME", WidgetType::Value, "LIFT", "lift.deg", 296, 0, 130, 72, 0},
+    {"HOME", WidgetType::Value, "X", "pose.x", 0, 88, 130, 60, 0},
+    {"HOME", WidgetType::Value, "Y", "pose.y", 148, 88, 130, 60, 0},
+    {"HOME", WidgetType::Value, "CONTROLLER", "controller.battery", 296, 88, 130, 60, 0},
+    {"HOME", WidgetType::Light, "CLAW OPEN", "claw.open", 0, 172, 130, 24, 0xFBBF24},
+    {"HOME", WidgetType::Light, "INTAKE", "intake.on", 148, 172, 130, 24, 0x4ADE80},
     {}, // end marker, keep this last
 };
 const int kLayoutWidgetCount = sizeof(kLayoutWidgets) / sizeof(kLayoutWidgets[0]) - 1;
