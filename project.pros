@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "parth",
+    "project_name": "ishaan",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -342,7 +342,7 @@
     "upload_options": {
       "description": "iloveeternity",
       "icon": "pizza",
-      "slot": 3
+      "slot": 1
     },
     "use_early_access": false
   }

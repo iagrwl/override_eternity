@@ -2,9 +2,9 @@
 
 // reads a side distance sensor, works out which wall it's facing from the robot's
 // heading, and snaps that axis of the odom pose to the wall (walls at +/-71 in).
-float wallDistance(bool shouldPrint = false, bool useRightSensor = true) {
-    float offsetX = useRightSensor ? 2.5 : 3.0;
-    float offsetY = useRightSensor ? 0.5 : -1.0;
+float wallDistance(bool shouldPrint = false, bool useRightSensor = true, bool testing = false) {
+    float offsetX = useRightSensor ? 2.6 : 2.6;
+    float offsetY = useRightSensor ? 0.5 : -2.0;
 
     float distanceIn = (useRightSensor ? rightDistance.get() : leftDistance.get()) / 25.4 + offsetX;
 
@@ -28,13 +28,20 @@ float wallDistance(bool shouldPrint = false, bool useRightSensor = true) {
     float finalPos = wallSign * (71 - correctedDist);
 
     lemlib::Pose pose = chassis.getPose();
-    if (isXAxis) chassis.setPose(finalPos, pose.y, pose.theta);
-    else         chassis.setPose(pose.x, finalPos, pose.theta);
+    float odomPos = isXAxis ? pose.x : pose.y;
+    float error = odomPos - finalPos;   // + means odom thinks it's further positive than the sensor does
+
+    if (!testing) {
+        if (isXAxis) chassis.setPose(finalPos, pose.y, pose.theta);
+        else         chassis.setPose(pose.x, finalPos, pose.theta);
+    }
 
     if (shouldPrint) {
-        pros::lcd::print(5, "Distance: %.2f", distanceIn - offsetX);
-        pros::lcd::print(6, "Corrected: %.2f, Axis: %s", correctedDist, isXAxis ? "X" : "Y");
-        pros::lcd::print(7, "Reset pos: %.2f", finalPos);
+        std::cout << std::fixed << std::setprecision(2)
+              << "Distance: " << (distanceIn - offsetX) << "\n"
+              << "Corrected: " << correctedDist << ", Axis: " << (isXAxis ? "X" : "Y") << "\n"
+              << "Reset pos: " << finalPos << "\n"
+              << "raw" << distanceIn * 25.4 - offsetX << std::endl;
     }
 
     return finalPos;

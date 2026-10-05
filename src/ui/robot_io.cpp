@@ -147,7 +147,7 @@ void tareLift() {
 }
 
 void wallReset(bool rightSensor) {
-    float v = wallDistance(false, rightSensor);
+    float v = wallDistance(false, rightSensor, false);
     ui::log("wall reset (%s sensor) -> %.1f", rightSensor ? "right" : "left", v);
 }
 

@@ -36,7 +36,7 @@ inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwhe
 
 inline lemlib::OdomSensors sensors(&verticalTrackingWheel,   // v1
                                    nullptr,                  // v2
-                                   &horizontalTrackingWheel, // h1
+                                   nullptr, // h1
                                    nullptr,                  // h2
                                    &imu);
 

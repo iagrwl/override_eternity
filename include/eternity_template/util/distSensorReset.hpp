@@ -1,3 +1,3 @@
 #pragma once
 
-float wallDistance(bool shouldPrint, bool useRightSensor);
+float wallDistance(bool shouldPrint, bool useRightSensor, bool testing);
