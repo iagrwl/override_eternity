@@ -31,7 +31,8 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-    ui::runSelectedAuton();
+    // ui::runSelectedAuton();
+    three_pin_C();
 }
 
 void opcontrol() {
