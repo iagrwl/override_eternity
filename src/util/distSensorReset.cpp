@@ -4,8 +4,8 @@
 // reads a side distance sensor, works out which wall it's facing from the robot's
 // heading, and snaps that axis of the odom pose to the wall (walls at +/-71 in).
 float wallDistance(bool shouldPrint = false, bool useRightSensor = true, bool testing = false) {
-    float offsetX = useRightSensor ? 2.6 : 2.6;
-    float offsetY = useRightSensor ? 0.5 : -2.0;
+    float offsetX = useRightSensor ? 1.6 : 1.6;
+    float offsetY = useRightSensor ? -0.5 : 2.0;
 
     float distanceIn = (useRightSensor ? rightDistance.get() : leftDistance.get()) / 25.4 + offsetX;
 
@@ -42,7 +42,7 @@ float wallDistance(bool shouldPrint = false, bool useRightSensor = true, bool te
               << "Distance: " << (distanceIn - offsetX) << "\n"
               << "Corrected: " << correctedDist << ", Axis: " << (isXAxis ? "X" : "Y") << "\n"
               << "Reset pos: " << finalPos << "\n"
-              << "raw" << distanceIn * 25.4 - offsetX << std::endl;
+              << "raw" << distanceIn - offsetX << std::endl;
     }
 
     return finalPos;

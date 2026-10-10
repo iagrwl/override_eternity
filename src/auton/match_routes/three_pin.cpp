@@ -11,15 +11,24 @@ void three_pin_C() {
     chassis.turnToPoint(12, -47, 500);
     chassis.moveToPoint(12, -47, 1500, {.minSpeed = 30, .earlyExitRange = 3});
     lift.move_absolute(200, 127);
-    chassis.turnToPoint(24, -47, 800);
+    chassis.turnToPoint(24, -47, 800, {}, false);
     chassis.moveToPoint(24, -47, 1500, {.maxSpeed = 80});
     pros::delay(200);
     claw.move(-127);
-    chassis.moveToPoint(12, -47, 1200, {.forwards = false});
+    chassis.moveToPoint(8, -47, 1200, {.forwards = false});
     lift.move_absolute(0, 127);
     chassis.turnToPoint(24, -24, 750);
     claw.move(127);
-    chassis.moveToPoint(24,-24, 1500, {.maxSpeed = 80});
+    chassis.moveToPoint(24,-24, 1500, {.maxSpeed = 60});
+    chassis.turnToPoint(24, -48, 750);
+    lift.move_absolute(450, 127);
+    chassis.moveToPoint(24, -48, 1500, {.maxSpeed = 80}, false);
+    claw.move(-127);
+    chassis.moveToPoint(24, -28, 1200, {.forwards = false});
+    chassis.turnToPoint(48, -48, 750);
+    claw.move(127);
+    lift.move_absolute(0, 127);
+    chassis.moveToPoint(48,-48, 1500, {.maxSpeed = 60});
 
     
     
