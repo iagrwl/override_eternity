@@ -45,7 +45,7 @@ static const Source kSources[] = {
     {"drive.right_rpm",    "rpm",   -600,   600,  0, false, [](const Snapshot& s) { return s.rightRpm; }},
     {"motors.watts",       "W",        0,   140,  0, false, [](const Snapshot& s) { float w = 0; for (int i = 0; i < s.motorCount; i++) w += s.motors[i].watts; return w; }},
     {"intake.on",          "",         0,     1,  0, true,  [](const Snapshot& s) { return strcmp(s.intake, "OFF") ? 1.f : 0.f; }},
-    {"claw.open",          "",         0,     1,  0, true,  [](const Snapshot& s) { return s.clawOpen ? 1.f : 0.f; }},
+    {"pivot.out",          "",         0,     1,  0, true,  [](const Snapshot& s) { return s.pivotOut ? 1.f : 0.f; }},
     {"dist.left_in",       "in",       0,    80,  1, false, [](const Snapshot& s) { return s.leftDistMm / 25.4f; }},
     {"dist.right_in",      "in",       0,    80,  1, false, [](const Snapshot& s) { return s.rightDistMm / 25.4f; }},
     {"devices.problems",   "",         0,     5,  0, false, [](const Snapshot& s) { return (float)s.deviceProblems; }},

@@ -11,7 +11,7 @@ static lv_obj_t* s_memBar = nullptr;
 static int s_pending = -1;
 
 // first four buttons are instant utilities, the rest are routines that drive
-static const char* kUtility[] = {"CALIBRATE IMU", "ZERO POSE", "TARE LIFT", "TOGGLE CLAW"};
+static const char* kUtility[] = {"CALIBRATE IMU", "ZERO POSE", "TARE LIFT", "TOGGLE PIVOT"};
 static constexpr int kUtilityCount = 4;
 
 static void runPending() {
@@ -37,7 +37,7 @@ static void onTool(lv_event_t* e) {
             hw::tareLift();
             toast("lift tared", color::good());
             return;
-        case 3: hw::toggleClaw(); return;
+        case 3: hw::togglePivot(); return;
     }
     if (snapshot().compConnected) {
         toast("unplug the comp cable to run tests", color::bad());

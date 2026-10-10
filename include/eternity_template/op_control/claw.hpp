@@ -1,5 +1,5 @@
 #pragma once
 
-extern bool isClawOpen;
+extern bool isPivotOut;
 
 void handleClaw();

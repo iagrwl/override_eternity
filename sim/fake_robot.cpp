@@ -161,7 +161,7 @@ void sample(Snapshot& s) {
     s.rightDistMm = (int)((72 - r.x) * 25.4f);
     s.liftDeg = r.liftDeg;
     s.intake = r.intakeOn ? "IN" : "OFF";
-    s.clawOpen = r.clawOpen;
+    s.pivotOut = r.pivotOut;
     s.leftRpm = leftRpm;
     s.rightRpm = rightRpm;
 }
@@ -170,7 +170,7 @@ void calibrateImu() { ui::log("[sim] calibrate IMU"); }
 void zeroPose() { robot.x = robot.y = robot.theta = 0; }
 void tareLift() { robot.liftDeg = 0; }
 void wallReset(bool right) { ui::log("[sim] wall reset (%s)", right ? "right" : "left"); }
-void toggleClaw() { robot.clawOpen = !robot.clawOpen; }
+void togglePivot() { robot.pivotOut = !robot.pivotOut; }
 
 void runAsync(void (*)(), const char* name) {
     if (running) return;

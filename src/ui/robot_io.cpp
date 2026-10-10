@@ -125,7 +125,7 @@ void sample(Snapshot& s) {
 
     s.liftDeg = lift.get_position();
     s.intake = intakeState == IntakeState::IN ? "IN" : intakeState == IntakeState::OUT ? "OUT" : "OFF";
-    s.clawOpen = isClawOpen;
+    s.pivotOut = isPivotOut;
 }
 
 // ---------------------------------------------------------------- actions
@@ -151,9 +151,9 @@ void wallReset(bool rightSensor) {
     ui::log("wall reset (%s sensor) -> %.1f", rightSensor ? "right" : "left", v);
 }
 
-void toggleClaw() {
-    isClawOpen = !isClawOpen;
-    claw.set_value(isClawOpen);
+void togglePivot() {
+    isPivotOut = !isPivotOut;
+    clawPivot.set_value(isPivotOut);
 }
 
 static std::atomic<bool> s_running{false};

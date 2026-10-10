@@ -74,7 +74,6 @@ inline lemlib::Chassis chassis(drivetrain,
 
 // PNEUMATICS //
 inline pros::adi::DigitalOut clawPivot('A');
-inline pros::adi::DigitalOut claw('B');
 
 
 
@@ -86,7 +85,8 @@ inline pros::MotorGroup lift({1, -9}, pros::MotorGearset::green);
 
 // intake
 inline pros::Motor intake(-21, pros::MotorGearset::blue);
-inline pros::Motor clawIntake(-16, pros::MotorGearset::green);
+// claw: 5.5W motor. one way closes the claw, the other way spins the flexwheels
+inline pros::Motor claw(16, pros::MotorGearset::green);
 
 inline pros::Distance leftDistance(7);
 inline pros::Distance rightDistance(12);

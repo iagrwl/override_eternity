@@ -24,7 +24,7 @@
     UI_MOTOR("LIFT A", lift, 0)            \
     UI_MOTOR("LIFT B", lift, 1)            \
     UI_MOTOR("INTAKE", intake, 0)          \
-    UI_MOTOR("CLAW IN", clawIntake, 0)
+    UI_MOTOR("CLAW", claw, 0)
 
 #define UI_SENSORS(UI_SENSOR)                       \
     UI_SENSOR("IMU", imu, imu)                      \

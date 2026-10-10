@@ -17,12 +17,12 @@ void simpleSkills() {
     chassis.turnToHeading(310,100);
     backUp(0.5);
     pros::delay(100);
-    claw.set_value(true);
+    // TODO claw is a motor now, was pneumatic: claw.set_value(true); // open
     pros::delay(200);
     chassis.moveToPoint(7.5,-3,800);
     chassis.turnToHeading(44,2000);
     chassis.moveToPoint(-5,-9,1000,{.maxSpeed=80},false);
-    claw.set_value(false);
+    // TODO claw is a motor now, was pneumatic: claw.set_value(false); // close
     pros::delay(50);
     liftPos(850);
     chassis.moveToPoint(0,-4,200,{.forwards=false},false);
@@ -30,6 +30,6 @@ void simpleSkills() {
     chassis.moveToPoint(19, -9, 1500, {.forwards=false,.maxSpeed=60}, false);
     liftPos(200);
     pros::delay(500);
-    claw.set_value(true);
+    // TODO claw is a motor now, was pneumatic: claw.set_value(true); // open
 
 }

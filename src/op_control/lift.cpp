@@ -44,18 +44,23 @@ void liftPos(double degree, bool wait) {
     while (std::abs(lift.get_position() - degree) > 10 && pros::millis() - start < 1500) pros::delay(10);
 }
 
-static bool manualLift = false;
+static bool stopping = false;
 
 void liftControl() {
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
         lift.move(127);
+        stopping = true;
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         lift.move(-127);
+        stopping = true;
     }
-    else if (manualLift) {
-        lift.brake(); // only stop when you let go of R1/R2, so liftPos() targets aren't cancelled
+    else if (stopping) {
+        // let go: actively fight the leftover momentum, then hold once it's stopped
+        lift.move_velocity(0);
+        if (std::abs(lift.get_actual_velocity()) < 5) {
+            lift.brake();
+            stopping = false;
+        }
     }
-    manualLift = controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ||
-                 controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2);
 }

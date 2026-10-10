@@ -19,7 +19,8 @@ void initialize() {
     left_dt.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
     right_dt.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 
-    claw.set_value(false);
+    claw.set_brake_mode(pros::MotorBrake::hold); // keeps the claw shut when you let go
+    clawPivot.set_value(false);
 
     if (const ui::Auton* a = ui::selectedAuton()) controller.print(2, 0, "run: %s", a->name);
     ui::bootComplete();

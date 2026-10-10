@@ -1,4 +1,5 @@
 #include "main.h"
+#include <iomanip>
 
 // reads a side distance sensor, works out which wall it's facing from the robot's
 // heading, and snaps that axis of the odom pose to the wall (walls at +/-71 in).

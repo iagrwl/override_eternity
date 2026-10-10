@@ -24,7 +24,7 @@ static const char* kHelp =
     "\n  brain sim  -  click = touch\n"
     "  arrows  drive the robot          1/2/3  disabled / auton / driver\n"
     "  c       plug/unplug comp cable   f      field control vs switch\n"
-    "  i       intake on/off            space  claw\n"
+    "  i       intake on/off            space  pivot\n"
     "  u       unplug a lift motor      b      drain battery\n"
     "  r       reset robot pose         s      screenshot -> sim/screenshots/\n"
     "  m       print UI memory          q/esc  quit\n"
@@ -141,7 +141,7 @@ int main(int argc, char** argv) { // SDL needs this exact signature on Windows
                     case SDLK_c: robot.compConnected = !robot.compConnected; break;
                     case SDLK_f: robot.fieldControl = !robot.fieldControl; break;
                     case SDLK_i: robot.intakeOn = !robot.intakeOn; break;
-                    case SDLK_SPACE: robot.clawOpen = !robot.clawOpen; break;
+                    case SDLK_SPACE: robot.pivotOut = !robot.pivotOut; break;
                     case SDLK_u: robot.unplugLift = !robot.unplugLift; break;
                     case SDLK_b: robot.battery = robot.battery > 10 ? robot.battery - 10 : 100; break;
                     case SDLK_r: robot.x = 0, robot.y = 0, robot.theta = 0; break;

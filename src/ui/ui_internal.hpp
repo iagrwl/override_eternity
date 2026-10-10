@@ -195,7 +195,7 @@ struct Snapshot {
     int leftDistMm = 0, rightDistMm = 0;
     float liftDeg = 0;
     const char* intake = "OFF";
-    bool clawOpen = false;
+    bool pivotOut = false;
     float leftRpm = 0, rightRpm = 0;
 };
 
@@ -207,7 +207,7 @@ void calibrateImu();
 void zeroPose();
 void tareLift();
 void wallReset(bool rightSensor);
-void toggleClaw();
+void togglePivot();
 void runAsync(void (*fn)(), const char* name);
 bool routineRunning();
 void abortRoutine();

@@ -13,13 +13,13 @@ void five_pin() {
     lift.move_relative(400, 127);
     chassis.moveToPoint(24, -47, 1000, {.forwards = false}, false);
     chassis.moveToPoint(50, -47, 500, {.forwards = false});
-    claw.set_value(true);
+    // TODO claw is a motor now, was pneumatic: claw.set_value(true); // open
     chassis.moveToPoint(12, -48, 1000);
     chassis.turnToPoint(24, -24, 500, {.forwards = false});
     // chassis.moveToPoint(18, -30, 1500, {.forwards = false});
     chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = 50});
     pros::delay(200);
-    claw.set_value(false);
+    // TODO claw is a motor now, was pneumatic: claw.set_value(false); // close
     lift.move(80);
     pros::delay(100);
     lift.move(0); 

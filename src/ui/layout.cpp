@@ -36,7 +36,7 @@ const WidgetDef kLayoutWidgets[] = {
     {"HOME", WidgetType::Value, "X", "pose.x", 0, 88, 130, 60, 0},
     {"HOME", WidgetType::Value, "Y", "pose.y", 148, 88, 130, 60, 0},
     {"HOME", WidgetType::Value, "CONTROLLER", "controller.battery", 296, 88, 130, 60, 0},
-    {"HOME", WidgetType::Light, "CLAW OPEN", "claw.open", 0, 172, 130, 24, 0xFBBF24},
+    {"HOME", WidgetType::Light, "PIVOT", "pivot.out", 0, 172, 130, 24, 0xFBBF24},
     {"HOME", WidgetType::Light, "INTAKE", "intake.on", 148, 172, 130, 24, 0x4ADE80},
     {}, // end marker, keep this last
 };
