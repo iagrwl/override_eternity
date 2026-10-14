@@ -11,8 +11,8 @@ extern ui::Console console;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
-inline pros::MotorGroup right_dt({-18, 6,10}, pros::MotorGearset::blue);
-inline pros::MotorGroup left_dt({-3, -5, 2}, pros::MotorGearset::blue);
+inline pros::MotorGroup left_dt({-3, 5, -4}, pros::MotorGearset::blue);
+inline pros::MotorGroup right_dt({8, -6,7}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
                                      &right_dt,
@@ -24,10 +24,10 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 
 // odom sensors
 
-inline pros::Imu imu(14); 
+inline pros::Imu imu(21); 
 
-inline pros::Rotation horizontalEnc(13);
-inline pros::Rotation verticalEnc(-8);
+inline pros::Rotation horizontalEnc(-13);
+inline pros::Rotation verticalEnc(12);
 // ver is 2.75
 //horz is 2
 inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, 3.5);
@@ -81,12 +81,11 @@ inline pros::adi::DigitalOut clawPivot('A');
 // MOTORS (negative port = reversed) //
 
 // lift (dr4b)
-inline pros::MotorGroup lift({1, -9}, pros::MotorGearset::green);
+inline pros::MotorGroup lift({2, -9}, pros::MotorGearset::green);
 
 // intake
 inline pros::Motor intake(-21, pros::MotorGearset::blue);
-// claw: 5.5W motor. one way closes the claw, the other way spins the flexwheels
-inline pros::Motor claw(16, pros::MotorGearset::green);
+inline pros::Motor clawIntake(-1, pros::MotorGearset::green);
 
-inline pros::Distance leftDistance(12);
-inline pros::Distance rightDistance(7);
+inline pros::Distance leftDistance(11);
+inline pros::Distance rightDistance(20);
