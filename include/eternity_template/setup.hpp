@@ -84,8 +84,8 @@ inline pros::adi::DigitalOut clawPivot('A');
 inline pros::MotorGroup lift({2, -9}, pros::MotorGearset::green);
 
 // intake
-inline pros::Motor intake(-21, pros::MotorGearset::blue);
-inline pros::Motor clawIntake(-1, pros::MotorGearset::green);
+inline pros::Motor intake(10, pros::MotorGearset::blue);
+inline pros::Motor claw(-1, pros::MotorGearset::green);
 
 inline pros::Distance leftDistance(11);
 inline pros::Distance rightDistance(20);
