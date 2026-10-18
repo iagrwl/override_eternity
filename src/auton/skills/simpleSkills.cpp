@@ -7,29 +7,15 @@ void backUp(float inches) {
 
 void simpleSkills() {
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    // setClaw(true);
     initLift();
     pros::delay(300);
-    liftPos(300);
-    chassis.moveToPoint(0, -4, 200,{.forwards=false},false);
-    chassis.swingToHeading(310, lemlib::DriveSide::RIGHT, 500);
-    chassis.moveToPoint(19, -9, 1500, {.forwards=false,.maxSpeed=60}, false);
-    chassis.turnToHeading(310,100);
-    backUp(0.5);
-    pros::delay(100);
-    // TODO claw is a motor now, was pneumatic: claw.set_value(true); // open
-    pros::delay(200);
-    chassis.moveToPoint(7.5,-3,800);
-    chassis.turnToHeading(44,2000);
-    chassis.moveToPoint(-5,-9,1000,{.maxSpeed=80},false);
-    // TODO claw is a motor now, was pneumatic: claw.set_value(false); // close
-    pros::delay(50);
-    liftPos(850);
-    chassis.moveToPoint(0,-4,200,{.forwards=false},false);
-    chassis.turnToHeading(310,300);
-    chassis.moveToPoint(19, -9, 1500, {.forwards=false,.maxSpeed=60}, false);
-    liftPos(200);
-    pros::delay(500);
-    // TODO claw is a motor now, was pneumatic: claw.set_value(true); // open
+    liftPos(650,100);
+    pros::delay(300);
+    chassis.moveToPoint(0,-14, 1000,{.forwards=false,.earlyExitRange=8});
+    chassis.turnToHeading(90,1000);
+
+    // chassis.moveToPose(-30,-10,90, 2300,{.forwards=false},false);
+    liftPos(100,60);
+    
 
 }

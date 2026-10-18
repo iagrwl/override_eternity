@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-constexpr int liftVelocity = 100; 
+constexpr int liftSpeed = 127;    // power for manual control with R1/R2 (0-127)
 
-// inital lift init stage. do not delete. this tares the liftat the start of the code. if init runs wrong way change motor port to neg sign.
 void initLift() {
     lift.set_brake_mode_all(pros::MotorBrake::hold);
 
@@ -28,31 +27,23 @@ void initLift() {
     lift.brake();
     lift.tare_position_all(); // zero BOTH lift motors (tare_position() only does the first one)
 
-    // if (!stalled) {
-    //     controller.print(0, 0, "LIFT NOT ZEROED");
-    //     controller.rumble(".-.-");
-    // }
 }
 
 
-// move the lift to a position (motor degrees from where it homed). wait = true blocks
-// until it gets there (or 1.5 s passes), so the next line of an auto runs after it.
-void liftPos(double degree, bool wait) {
-    lift.move_absolute(degree, liftVelocity);
-    if (!wait) return;
-    uint32_t start = pros::millis();
-    while (std::abs(lift.get_position() - degree) > 10 && pros::millis() - start < 1500) pros::delay(10);
+
+void liftPos(double degree, int speed) {
+    lift.move_absolute(degree, speed);
 }
 
 static bool stopping = false;
 
 void liftControl() {
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        lift.move(127);
+        lift.move(liftSpeed);
         stopping = true;
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-        lift.move(-127);
+        lift.move(-liftSpeed);
         stopping = true;
     }
     else if (stopping) {

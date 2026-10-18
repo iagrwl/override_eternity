@@ -124,7 +124,6 @@ void sample(Snapshot& s) {
     if (s.rightDistOk) s.rightDistMm = rightDistance.get();
 
     s.liftDeg = lift.get_position();
-    s.intake = intakeState == IntakeState::IN ? "IN" : intakeState == IntakeState::OUT ? "OUT" : "OFF";
     s.pivotOut = isPivotOut;
 }
 

@@ -26,12 +26,12 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 
 inline pros::Imu imu(21); 
 
-inline pros::Rotation horizontalEnc(-13);
-inline pros::Rotation verticalEnc(12);
+inline pros::Rotation horizontalEnc(14);
+inline pros::Rotation verticalEnc(13);
 // ver is 2.75
 //horz is 2
-inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, 3.5);
-inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, -0.5);
+inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, -4.25);
+inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, 0);
 
 
 inline lemlib::OdomSensors sensors(&verticalTrackingWheel,   // v1
@@ -84,8 +84,7 @@ inline pros::adi::DigitalOut clawPivot('A');
 inline pros::MotorGroup lift({2, -9}, pros::MotorGearset::green);
 
 // intake
-inline pros::Motor intake(10, pros::MotorGearset::blue);
 inline pros::Motor claw(-1, pros::MotorGearset::green);
 
 inline pros::Distance leftDistance(11);
-inline pros::Distance rightDistance(20);
+inline pros::Distance rightDistance(19);

@@ -27,9 +27,4 @@ void handleClaw() {
         claw.move(127);
     }
 
-    // B toggles the pneumatic pivot
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-        isPivotOut = !isPivotOut;
-        clawPivot.set_value(isPivotOut);
-    }
 }

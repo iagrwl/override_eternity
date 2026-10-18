@@ -2,4 +2,4 @@
 
 void liftControl();
 void initLift();
-void liftPos(double degree, bool wait = false);
+void liftPos(double degree, int speed = 127); 

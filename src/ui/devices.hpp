@@ -23,12 +23,11 @@
     UI_MOTOR("RIGHT 3", right_dt, 2)       \
     UI_MOTOR("LIFT A", lift, 0)            \
     UI_MOTOR("LIFT B", lift, 1)            \
-    UI_MOTOR("INTAKE", intake, 0)          \
     UI_MOTOR("CLAW", claw, 0)
 
 #define UI_SENSORS(UI_SENSOR)                       \
-    UI_SENSOR("IMU", imu, imu)                      \
-    UI_SENSOR("Horiz wheel", horizontalEnc, rotation) \
-    UI_SENSOR("Vert wheel", verticalEnc, rotation)  \
-    UI_SENSOR("Left dist", leftDistance, distance)  \
-    UI_SENSOR("Right dist", rightDistance, distance)
+    UI_SENSOR("imu", imu, imu)                      \
+    UI_SENSOR("hodom", horizontalEnc, rotation) \
+    UI_SENSOR("vodom", verticalEnc, rotation)  \
+    UI_SENSOR("LDist", leftDistance, distance)  \
+    UI_SENSOR("RDist", rightDistance, distance)

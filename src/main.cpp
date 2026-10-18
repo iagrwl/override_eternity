@@ -31,8 +31,9 @@ void disabled() {}
 void competition_initialize() {}
 
 void autonomous() {
-    ui::runSelectedAuton();
+    // ui::runSelectedAuton();
     //three_pin_C();
+    simpleSkills();
 }
 
 void opcontrol() {
@@ -46,8 +47,6 @@ void opcontrol() {
         handleArcade();
         liftControl();
         handleClaw();
-        manualIntake();
-        applyIntakeState();
 
         pros::delay(20);
     }
