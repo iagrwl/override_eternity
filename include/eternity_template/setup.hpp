@@ -30,7 +30,7 @@ inline pros::Rotation horizontalEnc(14);
 inline pros::Rotation verticalEnc(13);
 // ver is 2.75
 //horz is 2
-inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, -4.25);
+inline lemlib::TrackingWheel horizontalTrackingWheel(&horizontalEnc, lemlib::Omniwheel::NEW_2 * 24/25.7, +4.25);
 inline lemlib::TrackingWheel verticalTrackingWheel(&verticalEnc, lemlib::Omniwheel::NEW_275, 0);
 
 
