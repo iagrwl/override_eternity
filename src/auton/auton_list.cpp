@@ -13,6 +13,7 @@ const std::vector<ui::Auton> autonList = {
     {"dummy route", "6in forward route", ui::Alliance::Any, dummy, true, 0, 0, 0},
     {"simple skilly", "simple skill route", ui::Alliance::Skills, simpleSkills},
     {"three pin C", "ishy", ui::Alliance::Blue, three_pin_C},
+    {"odom drift", "spins in place, prints pose drift", ui::Alliance::Any, odomTurnDriftTest},
 };
 
 // picked when the SD card has no saved choice

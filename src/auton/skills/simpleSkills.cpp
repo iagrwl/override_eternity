@@ -24,7 +24,7 @@ void simpleSkills() {
     chassis.setPose(xFromWall, chassis.getPose().y, chassis.getPose().theta);
 
     chassis.moveToPose(-47, -19.5, 0, 1500, {.forwards=false, .lead=0.3, .maxSpeed=50}, false);
-    liftPos(0,60);
+    liftPos(-200,60);
     printf("left dist: %d mm (%.2f in)\n", (int)leftDistance.get(), leftDistance.get() / 25.4);
     
     pros::delay(1100);
