@@ -1,43 +1,62 @@
 #include "main.h"
 
-void simpleSkills() {
+// inches from robot center to each side distance sensor, both measured.
+static const float LEFT_SENSOR_OFFSET = 5.5;
+static const float RIGHT_SENSOR_OFFSET = 5.5;
 
-    float centerToWall = leftDistance.get() / 25.4 + 5.5;
+void simpleSkills() {
+    // robot starts facing east (90), so its right side faces the bottom wall
+    float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
     float startY = -71 + centerToWall;
-    chassis.setPose(-63, startY, -90);
-    printf("left dist: %d mm (%.2f in)\n", (int)leftDistance.get(), leftDistance.get() / 25.4);
+    chassis.setPose(-63, startY, 90);
+    printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     initLift();
     pros::delay(300);
-    liftPos(650,20);
+    liftPos(600,40);
     pros::delay(300);
+    claw.move(-127);
+    chassis.moveToPoint(-60,startY,300,{.maxSpeed=50});
+    chassis.turnToPoint(-48,-9.5, 1000,{.maxSpeed=50});
+    chassis.moveToPoint(-48,-9.5, 1000,{.maxSpeed=50});
+    chassis.turnToHeading(180,400,{},false);
 
-    chassis.moveToPoint(-60,startY,300,{.forwards=false,.maxSpeed=50});
-    chassis.turnToPoint(-47,-9.5, 1000,{.forwards=false,.maxSpeed=50});
-    chassis.moveToPoint(-47,-9.5, 1000,{.forwards=false,.maxSpeed=50});
-    chassis.turnToHeading(0,300,{},false);
 
     pros::delay(200);
-    float xFromWall = -71 + (leftDistance.get() / 25.4 + 5.5);
-    printf("wall reset: left dist %d mm -> x = %.2f (odom had %.2f)\n", (int)leftDistance.get(), xFromWall, chassis.getPose().x);
+    float xFromWall = -71 + (rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET);
+    printf("wall reset: right dist %d mm -> x = %.2f (odom had %.2f)\n", (int)rightDistance.get(), xFromWall, chassis.getPose().x);
     chassis.setPose(xFromWall, chassis.getPose().y, chassis.getPose().theta);
 
-    chassis.moveToPose(-47, -19.5, 0, 1500, {.forwards=false, .lead=0.3, .maxSpeed=50}, false);
-    liftPos(-200,60);
-    printf("left dist: %d mm (%.2f in)\n", (int)leftDistance.get(), leftDistance.get() / 25.4);
+    chassis.moveToPose(-47, -19.5, 180, 1200, {.lead=0.3, .maxSpeed=50}, false);
+    liftPos(0,60);
+    pros::delay(500);
+    claw.move(127);
+    printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     
     pros::delay(1100);
-    claw.move(-127);
-    chassis.moveToPoint(-46,-13,1000,{.minSpeed=60},false);
     
-    // chassis.turnToPoint(-30,-21,500,{.maxSpeed=80},false);
-    // chassis.moveToPoint(-31,-21,1500,{.maxSpeed=60});
-    // pros::delay(400);
-    // claw.move(-127);
-    // pros::delay(800);
-    // liftPos(800,80);
-    // pros::delay(400);
-    // chassis.turnToHeading(250,500,{.maxSpeed=80},false);
+    chassis.moveToPoint(-46,-12,750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
+    //pickup
+    chassis.turnToPoint(-30,-21,500,{.maxSpeed=80},false);
+    claw.move(-127);
+    chassis.moveToPoint(-28,-18.5,1500,{.maxSpeed=60});
+
+
+    pros::delay(400);
+    pros::delay(1000);
+    liftPos(800,80);
+    pros::delay(400);
+    chassis.turnToHeading(250,500,{.maxSpeed=80},false);
+    chassis.moveToPoint(-40,-24,2000,{.maxSpeed=60,.minSpeed=40},false);
+    liftPos(0,70);
     // chassis.moveToPoint()
+    pros::delay(850);
+    claw.move(127);
+    chassis.moveToPoint(-35,-22,700);
+    chassis.moveToPoint(-30,-22,700);
+    claw.move(-127);
+    chassis.turnToHeading(220,500);
+    chassis.moveToPose(-46,-48,220,2200,{.maxSpeed=70,.minSpeed=50});
+
 }
