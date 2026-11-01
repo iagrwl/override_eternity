@@ -8,18 +8,19 @@ void simpleSkills() {
     // robot starts facing east (90), so its right side faces the bottom wall
     float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
     float startY = -71 + centerToWall;
-    chassis.setPose(-63, startY, 90);
+    chassis.setPose(-60.5, startY, 90);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     initLift();
     pros::delay(300);
-    liftPos(600,40);
+    
     pros::delay(300);
     claw.move(-127);
     chassis.moveToPoint(-60,startY,300,{.maxSpeed=50});
-    chassis.turnToPoint(-48,-9.5, 1000,{.maxSpeed=50});
-    chassis.moveToPoint(-48,-9.5, 1000,{.maxSpeed=50});
+    chassis.turnToPoint(-46,-9.5, 1000,{.maxSpeed=50});
+    liftPos(600,70);
+    chassis.moveToPoint(-46,-9.5, 1000,{.maxSpeed=50});
     chassis.turnToHeading(180,400,{},false);
 
 
@@ -29,8 +30,8 @@ void simpleSkills() {
     chassis.setPose(xFromWall, chassis.getPose().y, chassis.getPose().theta);
 
     chassis.moveToPose(-47, -19.5, 180, 1200, {.lead=0.3, .maxSpeed=50}, false);
-    liftPos(0,60);
-    pros::delay(500);
+    liftPos(0,40);
+    pros::delay(1000);
     claw.move(127);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     
@@ -45,18 +46,25 @@ void simpleSkills() {
 
     pros::delay(400);
     pros::delay(1000);
-    liftPos(800,80);
+    liftPos(500,80);
     pros::delay(400);
     chassis.turnToHeading(250,500,{.maxSpeed=80},false);
+    //drop off
     chassis.moveToPoint(-40,-24,2000,{.maxSpeed=60,.minSpeed=40},false);
     liftPos(0,70);
     // chassis.moveToPoint()
     pros::delay(850);
     claw.move(127);
-    chassis.moveToPoint(-35,-22,700);
-    chassis.moveToPoint(-30,-22,700);
+    chassis.moveToPoint(-35,-22,700,{.forwards=false});
+    chassis.moveToPoint(-30,-22,700,{.forwards=false});
     claw.move(-127);
     chassis.turnToHeading(220,500);
-    chassis.moveToPose(-46,-48,220,2200,{.maxSpeed=70,.minSpeed=50});
-
+    chassis.moveToPose(-46,-48,220,2200,{.maxSpeed=70,.minSpeed=50},false);
+    liftPos(800,80);
+    chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
+    chassis.moveToPoint(-46,-24,1200,{.maxSpeed=60},false);
+    liftPos(0,80);
+    pros::delay(800);
+    claw.move(127);
+    chassis.moveToPoint(-46,-40,1200,{.forwards=false});
 }
