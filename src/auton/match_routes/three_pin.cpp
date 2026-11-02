@@ -1,44 +1,68 @@
 #include "main.h"
 
+// inches from robot center to each side distance sensor, both measured.
+static const float LEFT_SENSOR_OFFSET = 5.5;
+static const float RIGHT_SENSOR_OFFSET = 5.5;
+
 void three_pin_C() {
-    // absolute field coords (origin = field center). robot starts facing the left wall;
-    // x is 63 in from center; y comes from the left distance sensor (faces the bottom wall),
-    // reading minus the 5.5 in sensor offset = center to wall (60.5 in at the usual start)
-    float centerToWall = leftDistance.get() / 25.4 - 5.5;
-    chassis.setPose(-63, -71 + centerToWall, -90);
+    // robot starts facing east (90), so its right side faces the bottom wall
+    float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
+    float startY = -71 + centerToWall;
+    chassis.setPose(-60.5, startY, 90);
+    printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
+    printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    initLift();
-    pros::delay(300);
-    liftPos(650,20);
-    pros::delay(300);
-    chassis.moveToPoint(-60,-10.5,300);
-    chassis.turnToPoint(-49,-20.5, 1000,{.forwards=false,.maxSpeed=50,.earlyExitRange=2});
-    chassis.moveToPoint(-49,-20.5, 1000,{.forwards=false,.maxSpeed=50,.earlyExitRange=2});
-    chassis.turnToHeading(0,300);
-    chassis.moveToPoint(-49.5,-30.5,750,{.forwards=false,.maxSpeed=50},false);
-    liftPos(0,70);
-    pros::delay(750);
+
     claw.move(-127);
-    chassis.moveToPoint(-50,-26.5,750,{.minSpeed=60},false);
+    chassis.moveToPoint(-60,startY,300,{.maxSpeed=70});
+    chassis.turnToPoint(-46,-9.5, 1000,{.maxSpeed=70});
+    liftPos(550,127);
     
-    chassis.turnToPoint(-35,-27.5,500,{.maxSpeed=80});
-    chassis.moveToPoint(-33,-31,1000,{.maxSpeed=70});
-    pros::delay(400);
-    claw.move(-127);
+    chassis.moveToPoint(-46,-9.5, 1000);
+    chassis.turnToHeading(180,400,{},false);
+
+
     pros::delay(200);
+    float xFromWall = -71 + (rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET);
+    printf("wall reset: right dist %d mm -> x = %.2f (odom had %.2f)\n", (int)rightDistance.get(), xFromWall, chassis.getPose().x);
+    chassis.setPose(xFromWall, chassis.getPose().y, chassis.getPose().theta);
 
-    liftPos(700, 80);
-    chassis.turnToPoint(-45, -33, 750);
-    chassis.moveToPoint(-45, -33, 1200, {.maxSpeed = 50}, false);
-    chassis.turnToHeading(-90, 500);
-    left_dt.move(-20);
-    right_dt.move(-20);
-    pros::delay(100);
-    left_dt.move(0);
-    right_dt.move(0);
-    liftPos(100, 60);
-    pros::delay(100);
+    chassis.moveToPose(-47, -19.5, 180, 1200, {.lead=0.3, .maxSpeed=80}, false);
+    liftPos(0,40);
+    pros::delay(1000);
     claw.move(127);
+    printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
+    
+    pros::delay(500);
+    
+    chassis.moveToPoint(-46,-12,750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
+    //pickup
+    chassis.turnToPoint(-30,-21,500,{.maxSpeed=80},false);
+    claw.move(-127);
+    chassis.moveToPoint(-28,-18.5,1500,{.maxSpeed=60});
 
+
+    pros::delay(400);
+    pros::delay(1000);
+    liftPos(500,80);
+    pros::delay(400);
+    chassis.turnToHeading(250,500,{.maxSpeed=80},false);
+    //drop off
+    chassis.moveToPoint(-40,-24,2000,{.maxSpeed=60,.minSpeed=40},false);
+    liftPos(0,70);
     // chassis.moveToPoint()
+    pros::delay(850);
+    claw.move(127);
+    chassis.moveToPoint(-35,-22,700,{.forwards=false});
+    chassis.moveToPoint(-30,-22,700,{.forwards=false});
+    claw.move(-127);
+    chassis.turnToHeading(220,500);
+    chassis.moveToPose(-46,-48,220,2200,{.maxSpeed=70,.minSpeed=50},false);
+    liftPos(800,80);
+    chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
+    chassis.moveToPoint(-46,-24,1200,{.maxSpeed=60},false);
+    liftPos(0,80);
+    pros::delay(800);
+    claw.move(127);
+    chassis.moveToPoint(-46,-40,1200,{.forwards=false});
 }

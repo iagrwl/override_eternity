@@ -29,8 +29,47 @@ void initLift() {
 
 }
 
+std::atomic<double> liftTarget{0};
+std::atomic<bool> liftPidOn{true};
 
+double liftAngle() {
+    return liftRot.get_position() / 100.0;
+}
 
+void liftPID() {
+    const double kP = 60.0;
+    const double kI = 0.0;
+    const double kD = 0.0;
+    const double kG = 0.0;
+    const double iMax = 3000;
+
+    double integral = 0, prevError = 0;
+    uint32_t now = pros::millis();
+
+    while (true) {
+        if (liftPidOn) {
+            double error = liftTarget - liftAngle();
+
+            integral += error * 0.01;
+            if (integral > iMax / (kI + 1e-9)) integral = iMax / (kI + 1e-9);
+            if (integral < -iMax / (kI + 1e-9)) integral = -iMax / (kI + 1e-9);
+            if (fabs(error) < 1.0) integral = 0;       // reset near target
+
+            double derivative = (error - prevError) / 0.01;
+            prevError = error;
+
+            double out = kP * error + kI * integral + kD * derivative + kG;
+            out = std::clamp(out, -12000.0, 12000.0);
+            lift.move_voltage(out);     // used move_voltage because it has more 
+                                        // steps than just move, resulting in a
+                                        // smoother pid.
+                                        // (-12000 -> 12000 vs -127 -> 127)
+        }
+        pros::Task::delay_until(&now, 10);
+    }
+
+    
+}
 void liftPos(double degree, int speed) {
     lift.move_absolute(degree, speed);
 }

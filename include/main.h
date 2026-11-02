@@ -77,6 +77,7 @@ void opcontrol(void);
  */
 #include <fstream>
 #include <iostream>
+#include <atomic>
 #include "eternity_template/setup.hpp"
 #include "eternity_template/op_control/op_control.hpp"
 #include "eternity_template/auton/autons.hpp"

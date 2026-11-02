@@ -24,7 +24,10 @@ void initialize() {
 
     if (const ui::Auton* a = ui::selectedAuton()) controller.print(2, 0, "run: %s", a->name);
     ui::bootComplete();
+
+    pros::delay(300);
 }
+
 
 void disabled() {}
 
@@ -32,8 +35,8 @@ void competition_initialize() {}
 
 void autonomous() {
     // ui::runSelectedAuton();
-    //three_pin_C();
-    simpleSkills();
+    three_pin_C();
+    // simpleSkills();
 }
 
 void opcontrol() {

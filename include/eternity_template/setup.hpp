@@ -87,5 +87,9 @@ inline pros::MotorGroup lift({2, -9}, pros::MotorGearset::green);
 // intake
 inline pros::Motor claw(-1, pros::MotorGearset::green);
 
+
+// SENSORS
 inline pros::Distance leftDistance(11);
 inline pros::Distance rightDistance(19);
+
+inline pros::Rotation liftRot(-12);
