@@ -25,6 +25,9 @@ void initialize() {
     if (const ui::Auton* a = ui::selectedAuton()) controller.print(2, 0, "run: %s", a->name);
     ui::bootComplete();
 
+    pros::Task liftTask{liftPID};
+    liftPidOn = false;
+
     pros::delay(300);
 }
 
