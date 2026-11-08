@@ -40,15 +40,15 @@ void three_pin_C() {
     
     chassis.moveToPoint(-46,-12,750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
     //pickup
-    chassis.turnToPoint(-30,-21,500,{.maxSpeed=80},false);
+    chassis.turnToPoint(-29,-19,500,{.maxSpeed=80},false);
     claw.move(-127);
-    chassis.moveToPoint(-28,-18.5,1500,{.maxSpeed=60});
+    chassis.moveToPoint(-27,-18,1500,{.maxSpeed=60});
 
 
     pros::delay(400);
     pros::delay(1000);
     // liftPos(500,80);
-    liftTarget = 60;
+    liftTarget = 20;
     pros::delay(400);
     chassis.turnToHeading(250,500,{.maxSpeed=80},false);
     //drop off
@@ -64,9 +64,10 @@ void three_pin_C() {
     chassis.turnToHeading(220,500);
     chassis.moveToPose(-46,-48,220,2200,{.maxSpeed=70,.minSpeed=50},false);
     // liftPos(800,80);
-    liftTarget = 80;
-    chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
-    chassis.moveToPoint(-46,-24,1200,{.maxSpeed=60},false);
+    liftTarget = 20;
+    chassis.turnToPoint(-46,-24,1000,{.maxSpeed=80},false);
+    chassis.moveToPoint(-46,-24,2000,{.maxSpeed=20},false);
+    pros::delay(1500);
     // liftPos(0,80);
     liftTarget = 0;
     pros::delay(800);

@@ -12,14 +12,14 @@ void simpleSkills() {
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-    initLift();
+    liftPidOn = true; // lift already homed in initialize(); PID task drives it to liftTarget
     pros::delay(300);
     
     pros::delay(300);
     claw.move(-127);
     chassis.moveToPoint(-60,startY,300,{.maxSpeed=50});
     chassis.turnToPoint(-46,-9.5, 1000,{.maxSpeed=50});
-    liftPos(600,70);
+    liftTarget = 10;
     chassis.moveToPoint(-46,-9.5, 1000,{.maxSpeed=50});
     chassis.turnToHeading(180,400,{},false);
 
@@ -30,7 +30,7 @@ void simpleSkills() {
     chassis.setPose(xFromWall, chassis.getPose().y, chassis.getPose().theta);
 
     chassis.moveToPose(-47, -19.5, 180, 1200, {.lead=0.3, .maxSpeed=50}, false);
-    liftPos(0,40);
+    liftTarget = 0;
     pros::delay(1000);
     claw.move(127);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
@@ -39,19 +39,19 @@ void simpleSkills() {
     
     chassis.moveToPoint(-46,-12,750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
     //pickup
-    chassis.turnToPoint(-30,-21,500,{.maxSpeed=80},false);
+    chassis.turnToPoint(-27,-18,500,{.maxSpeed=80},false);
     claw.move(-127);
-    chassis.moveToPoint(-28,-18.5,1500,{.maxSpeed=60});
+    chassis.moveToPoint(-27,-18.5,1500,{.maxSpeed=60});
 
 
     pros::delay(400);
     pros::delay(1000);
-    liftPos(500,80);
+    liftTarget = 20;
     pros::delay(400);
     chassis.turnToHeading(250,500,{.maxSpeed=80},false);
     //drop off
     chassis.moveToPoint(-40,-24,2000,{.maxSpeed=60,.minSpeed=40},false);
-    liftPos(0,70);
+    liftTarget = 0;
     // chassis.moveToPoint()
     pros::delay(850);
     claw.move(127);
@@ -59,12 +59,17 @@ void simpleSkills() {
     chassis.moveToPoint(-30,-22,700,{.forwards=false});
     claw.move(-127);
     chassis.turnToHeading(220,500);
-    chassis.moveToPose(-46,-48,220,2200,{.maxSpeed=70,.minSpeed=50},false);
-    liftPos(800,80);
+    chassis.moveToPose(-46,-48,210,2200,{.maxSpeed=70,.minSpeed=50},false);
+    liftTarget = 40;
     chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
     chassis.moveToPoint(-46,-24,1200,{.maxSpeed=60},false);
-    liftPos(0,80);
+    liftTarget = 0;
     pros::delay(800);
     claw.move(127);
     chassis.moveToPoint(-46,-40,1200,{.forwards=false});
+    chassis.turnToHeading(0,200);
+    claw.move(-127);
+    pros::delay(400);
+    chassis.turnToHeading(318,500);
+    chassis.moveToPoint(-58,-28,2000,{.maxSpeed=60},false);
 }
