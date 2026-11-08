@@ -13,37 +13,39 @@ void three_pin_C() {
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
     liftPidOn = true; // lift already homed in initialize(); PID task drives it to liftTarget
-
+    
     claw.move(-127);
-    chassis.moveToPoint(-60,startY,300);
-    chassis.turnToPoint(-46,-9.5, 750);
+    // chassis.moveToPoint(-60,startY,300);
+    // chassis.turnToPoint(-46,-9.5, 750);
     liftTarget = 10;
-    chassis.moveToPoint(-46,-9.5, 1000);
-    chassis.turnToHeading(180,400,{},false);
+    // chassis.moveToPoint(-46,-9.5, 1000);
+    // chassis.turnToHeading(180,400,{},false);
 
+    chassis.moveToPose(-48, -22, 180, 1500, {.lead = 0.4, .minSpeed = 60}, false);
+    chassis.turnToHeading(-180, 300, {}, false);
 
     pros::delay(200);
     float xFromWall = -71 + (rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET);
     printf("wall reset: right dist %d mm -> x = %.2f (odom had %.2f)\n", (int)rightDistance.get(), xFromWall, chassis.getPose().x);
     chassis.setPose(xFromWall, chassis.getPose().y, chassis.getPose().theta);
 
-    chassis.moveToPose(-47, -19.5, 180, 900, {.lead=0.3, .maxSpeed=50}, false);
+    // chassis.moveToPose(-47, -19.5, 180, 900, {.lead=0.3, .maxSpeed=50}, false);
     liftTarget = 0;
-    pros::delay(200);
+    pros::delay(300);
     claw.move(127);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     
-    pros::delay(900);
+    pros::delay(500);
     
-    chassis.moveToPoint(-46,-12,750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
-    //pickup
+    chassis.moveToPoint(-46,-8, 750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
+    // pickup
     chassis.turnToPoint(-26,-19.5,500,{.maxSpeed=80},false);
     claw.move(-127);
     chassis.moveToPoint(-26,-19.5,1600,{.maxSpeed=60}, false);
 
     liftTarget = 20;
     // pros::delay(400);
-    chassis.turnToHeading(250,500,{.maxSpeed=80},false);
+    chassis.turnToHeading(240,500,{.maxSpeed=80},false);
     //drop off
     chassis.moveToPoint(-40,-24,1100,{},false);
     liftTarget = 0;
@@ -51,17 +53,18 @@ void three_pin_C() {
     pros::delay(450);
     claw.move(127);
 
-    chassis.moveToPoint(-35,-22,700,{.forwards=false});
-    chassis.moveToPoint(-30,-22,700,{.forwards=false});
+    // chassis.moveToPoint(-35,-22,700,{.forwards=false});
+    chassis.moveToPoint(-30,-22,1000,{.forwards=false}, false);
     claw.move(-127);
     chassis.turnToHeading(220,500);
-    chassis.moveToPose(-46,-48,210,2200,{.lead = 0.4,.maxSpeed=70,.minSpeed=50},false);
+    chassis.moveToPose(-45,-48,210,2200,{.lead = 0.4,.maxSpeed=70,.minSpeed=50},false);
     liftTarget = 40;
     chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
-    chassis.moveToPoint(-46,-24,1200,{.maxSpeed=60},false);
-    liftTarget = 0;
+    chassis.moveToPoint(-46,-24,1200,{.maxSpeed = 60},false);
+    liftTarget = 30;
     pros::delay(200);
     claw.move(127);
-    chassis.moveToPoint(-46,-40,1200,{.forwards=false});
-    chassis.turnToHeading(270,200);
+    chassis.moveToPoint(-46,-50,1200,{.forwards=false, .minSpeed = 40, .earlyExitRange = 5});
+    liftTarget = 0;
+    chassis.turnToHeading(270,750);
 }
