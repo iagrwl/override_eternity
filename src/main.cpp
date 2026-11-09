@@ -32,13 +32,15 @@ void initialize() {
 }
 
 
-void disabled() {}
+void disabled() {
+    liftPidOn = false;
+}
 
 void competition_initialize() {}
 
 void autonomous() {
     // ui::runSelectedAuton();
-    three_pin_C();
+    three_pin_F();
     // simpleSkills();
 }
 
@@ -53,6 +55,7 @@ void opcontrol() {
         handleArcade();
         liftControl();
         handleClaw();
+        handleToggle();
 
         pros::delay(20);
     }
