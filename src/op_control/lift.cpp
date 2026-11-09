@@ -98,9 +98,8 @@ void liftControl() {
     }
     else if (stopping) {
         // let go: actively fight the leftover momentum, then hold once it's stopped
-        liftTarget  = liftRot.get_angle();
-        liftPidOn = true;
+        liftPidOn = false;
+        lift.move(0);
         currLiftState = 0;
-        stopping = false;
     }
 }
