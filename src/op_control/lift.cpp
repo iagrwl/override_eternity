@@ -76,7 +76,7 @@ void liftPos(double degree, int speed) {
 }
 
 static bool stopping = false;
-static double liftHeights[] = {30, 47.5, 65, 82.5, 100};
+static double liftHeights[] = {25, 42.5, 60, 77.5, 95};
 static int currLiftState = 0;
 
 void liftControl() {
