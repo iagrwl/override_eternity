@@ -81,11 +81,17 @@ int currLiftState = 0;
 
 void liftControl() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
+        
+        liftPidOn = true;
+        stopping = false;
+
+        liftTarget = liftHeights[currLiftState];
+
         currLiftState++;
         if (currLiftState = 5) currLiftState = 0;
 
-        liftTarget = liftHeights[currLiftState];
-        liftPidOn = true;
+
+        
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
         liftPidOn = false;
