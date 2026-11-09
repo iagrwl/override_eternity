@@ -76,8 +76,8 @@ void liftPos(double degree, int speed) {
 }
 
 static bool stopping = false;
-double liftHeights[] = {30, 47.5, 65, 82.5, 100};
-int currLiftState = 0;
+static double liftHeights[] = {30, 47.5, 65, 82.5, 100};
+static int currLiftState = 0;
 
 void liftControl() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
@@ -88,7 +88,7 @@ void liftControl() {
         liftTarget = liftHeights[currLiftState];
 
         currLiftState++;
-        if (currLiftState = 5) currLiftState = 0;
+        if (currLiftState == 5) currLiftState = 0;
         
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
@@ -101,5 +101,6 @@ void liftControl() {
         liftTarget  = liftRot.get_angle();
         liftPidOn = true;
         currLiftState = 0;
+        stopping = false;
     }
 }
