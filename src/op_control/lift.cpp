@@ -89,8 +89,6 @@ void liftControl() {
 
         currLiftState++;
         if (currLiftState = 5) currLiftState = 0;
-
-
         
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
@@ -102,5 +100,6 @@ void liftControl() {
         // let go: actively fight the leftover momentum, then hold once it's stopped
         liftTarget  = liftRot.get_angle();
         liftPidOn = true;
+        currLiftState = 0;
     }
 }
