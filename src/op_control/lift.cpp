@@ -76,22 +76,25 @@ void liftPos(double degree, int speed) {
 }
 
 static bool stopping = false;
+double liftHeights[] = {30, 47.5, 65, 82.5, 100};
+int currLiftState = 0;
 
 void liftControl() {
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        lift.move(liftSpeed);
-        stopping = true;
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
+        currLiftState++;
+        if (currLiftState = 5) currLiftState = 0;
+
+        liftTarget = liftHeights[currLiftState];
+        liftPidOn = true;
     }
     else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        liftPidOn = false;
         lift.move(-liftSpeed);
         stopping = true;
     }
     else if (stopping) {
         // let go: actively fight the leftover momentum, then hold once it's stopped
-        lift.move_velocity(0);
-        if (std::abs(lift.get_actual_velocity()) < 5) {
-            lift.brake();
-            stopping = false;
-        }
+        liftTarget  = liftRot.get_angle();
+        liftPidOn = true;
     }
 }
