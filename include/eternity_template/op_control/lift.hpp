@@ -7,6 +7,7 @@ extern std::atomic<double> liftKD;
 
 
 void liftControl();
+void manualLiftControl();
 void initLift();
 void liftPos(double degree, int speed = 127); 
 void liftPID();

@@ -54,6 +54,7 @@ void opcontrol() {
 
         handleArcade();
         liftControl();
+        // manualLiftControl();
         handleClaw();
         handleToggle();
 

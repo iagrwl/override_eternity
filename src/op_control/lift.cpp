@@ -103,3 +103,22 @@ void liftControl() {
         currLiftState = 0;
     }
 }
+
+void manualLiftControl() {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        lift.move(liftSpeed);
+        stopping = true;
+    }
+    else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        lift.move(-liftSpeed);
+        stopping = true;
+    }
+    else if (stopping) {
+        // let go: actively fight the leftover momentum, then hold once it's stopped
+        lift.move_velocity(0);
+        if (std::abs(lift.get_actual_velocity()) < 5) {
+            lift.brake();
+            stopping = false;
+        }
+    }
+}
