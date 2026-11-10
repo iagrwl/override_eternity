@@ -64,7 +64,7 @@ inline lemlib::ControllerSettings angular_controller(2.2,      // kP
                                                      0);     // max acceleration (slew)
 // drive curves: https://www.vexforum.com/t/expo-drive-lemlibs-implementation
 inline lemlib::ExpoDriveCurve throttle_curve(3, 0, 1.01);
-inline lemlib::ExpoDriveCurve steer_curve(3, 8, 1.002);
+inline lemlib::ExpoDriveCurve steer_curve(3, 8, 1.002); // lower brings more linear - more sensitive, middle value higher mean more responsive near centre
 
 inline lemlib::Chassis chassis(drivetrain,
                                lateral_controller,
