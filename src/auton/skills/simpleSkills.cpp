@@ -79,7 +79,7 @@ void simpleSkills() {
 
     chassis.moveToPoint(-59, -60, 1000, {}, false);
     pros::delay(500);
-    chassis.moveToPoint(-45,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
+    chassis.moveToPoint(-47,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
     chassis.turnToHeading(0, 750, {.maxSpeed = 80}, false);
     liftTarget = 70;
     pros::delay(500);
@@ -103,8 +103,8 @@ void simpleSkills() {
 
     chassis.moveToPoint(-59, -60, 1000, {}, false);
     pros::delay(500);
-    chassis.moveToPoint(-45,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
-    chassis.turnToHeading(0, 500, {.maxSpeed = 80}, false);
+    chassis.moveToPoint(-47,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
+    chassis.turnToHeading(0, 750, {.maxSpeed = 80}, false);
     liftTarget = 80;
     pros::delay(500);
     chassis.moveToPoint(-48,-23,2000, {.maxSpeed = 50}, false);
@@ -127,8 +127,8 @@ void simpleSkills() {
 
     chassis.moveToPoint(-59, -60, 1000, {}, false);
     pros::delay(500);
-    chassis.moveToPoint(-45,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
-    chassis.turnToHeading(0, 500, {.maxSpeed = 80}, false);
+    chassis.moveToPoint(-47,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
+    chassis.turnToHeading(0, 750, {.maxSpeed = 80}, false);
     liftTarget = 120;
     pros::delay(500);
     chassis.moveToPoint(-48,-23,2000, {.maxSpeed = 50}, false);
@@ -151,13 +151,14 @@ void simpleSkills() {
 
     chassis.moveToPoint(-59, -60, 1000, {}, false);
     pros::delay(500);
-    chassis.moveToPoint(-45,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
+    chassis.moveToPoint(-48,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
     liftTarget = 30;
-    chassis.turnToPoint(0,5,500);
+    chassis.turnToPoint(0,10,500);
     chassis.moveToPoint(0,0,4000,{.maxSpeed=70},false);
     liftTarget = 0;
     pros::delay(500);
     claw.move(127);
+    chassis.moveToPoint(-10,0,1000,{.forwards=false,.maxSpeed=80},false);
 
 }
 
