@@ -40,8 +40,8 @@ void competition_initialize() {}
 
 void autonomous() {
     // ui::runSelectedAuton();
-    three_pin_F();
-    // simpleSkills();
+    //three_pin_C();
+    simpleSkills();
 }
 
 void opcontrol() {
@@ -53,8 +53,8 @@ void opcontrol() {
         }
 
         handleArcade();
-        liftControl();
-        // manualLiftControl();
+        //liftControl();
+        manualLiftControl();
         handleClaw();
         handleToggle();
 

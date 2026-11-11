@@ -26,7 +26,7 @@ inline lemlib::Drivetrain drivetrain(&left_dt,
 
 inline pros::Imu imu(21); 
 
-inline pros::Rotation horizontalEnc(14);
+inline pros::Rotation horizontalEnc(18);
 inline pros::Rotation verticalEnc(13);
 // ver is 2.75
 //horz is 2

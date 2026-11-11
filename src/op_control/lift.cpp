@@ -75,6 +75,24 @@ void liftPos(double degree, int speed) {
     lift.move_absolute(degree, speed);
 }
 
+// Blocking. Drives the lift at a fixed power (0-127) until the rotation sensor
+// reads targetDeg, then hands the lift back to the PID holding at that angle.
+void liftToAngle(double targetDeg, int power, uint32_t timeoutMs) {
+    liftPidOn = false;
+    bool goingUp = targetDeg > liftAngle();
+    lift.move(goingUp ? power : -power);
+
+    uint32_t start = pros::millis();
+    while (pros::millis() - start < timeoutMs) {
+        double angle = liftAngle();
+        if (goingUp ? angle >= targetDeg : angle <= targetDeg) break;
+        pros::delay(10);
+    }
+    lift.brake();
+    liftTarget = targetDeg; // hand back to the PID holding right here
+    liftPidOn = true;
+}
+
 static bool stopping = false;
 static double liftHeights[] = {25, 42.5, 60, 77.5, 95};
 static int currLiftState = 0;
