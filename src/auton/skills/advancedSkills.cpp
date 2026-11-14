@@ -9,6 +9,9 @@ void advancedSkills() {
     // robot starts facing east (90), so its right side faces the bottom wall
     float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
     float startY = -71 + centerToWall;
+    toggleMotor.move(-127);
+    pros::delay(500);
+    toggleMotor.move(0);
     chassis.setPose(-60.5, startY, 90);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
