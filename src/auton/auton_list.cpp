@@ -8,12 +8,12 @@
 
 extern const std::vector<ui::Auton> autonList;
 const std::vector<ui::Auton> autonList = {
-    {"five Pin", "ishy", ui::Alliance::Blue, five_pin, true, 0, -64, 180},
-    {"sawp", "", ui::Alliance::Any, soloAWP},
+    {"five pin", "ishy", ui::Alliance::Blue, five_pin, true, 0, -64, 180},
     {"dummy route", "6in forward route", ui::Alliance::Any, dummy, true, 0, 0, 0},
     {"simple skilly", "simple skill route", ui::Alliance::Skills, simpleSkills},
-    {"three pin C", "ishy", ui::Alliance::Blue, three_pin_C},
-    {"odom drift", "spins in place, prints pose drift", ui::Alliance::Any, odomTurnDriftTest},
+    {"advanced skilly", "advanced skill route", ui::Alliance::Skills, advancedSkills},
+    {"three pin C", "close side", ui::Alliance::Blue, three_pin_C},
+    {"three pin F", "far side", ui::Alliance::Blue, three_pin_F},
 };
 
 // picked when the SD card has no saved choice

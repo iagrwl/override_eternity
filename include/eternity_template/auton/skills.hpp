@@ -2,3 +2,4 @@
 
 // declare all different skills routes here
 void simpleSkills();
+void advancedSkills();
