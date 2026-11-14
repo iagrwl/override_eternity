@@ -24,7 +24,7 @@ void three_pin_C() {
     // chassis.moveToPoint(-46,-9.5, 1000);
     // chassis.turnToHeading(180,400,{},false);
 
-    chassis.moveToPose(-48, -22, 180, 1500, {.lead = 0.4, .minSpeed = 60}, false);
+    chassis.moveToPose(-48, -24, 180, 1500, {.lead = 0.4, .minSpeed = 60}, false);
     chassis.turnToHeading(-180, 300, {}, false);
 
     pros::delay(200);
@@ -34,7 +34,7 @@ void three_pin_C() {
 
     // chassis.moveToPose(-47, -19.5, 180, 900, {.lead=0.3, .maxSpeed=50}, false);
     liftTarget = 0;
-    pros::delay(300);
+    pros::delay(800);
     claw.move(127);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     
@@ -58,9 +58,11 @@ void three_pin_C() {
 
     chassis.moveToPoint(-25,-22,1000,{.forwards=false}, false);
     claw.move(-127);
-    chassis.turnToHeading(215,500);
-    chassis.moveToPose(-46,-50,215,2200,{.lead = 0.4,.maxSpeed=65,.minSpeed=50},false);
+    chassis.turnToHeading(220,800);
+    chassis.moveToPose(-46,-50,220,2200,{.lead = 0.4,.maxSpeed=65,.minSpeed=50},false);
     liftTarget = 40;
+    pros::delay(500);
+
 
     chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
     chassis.moveToPoint(-46,-24,1200,{.maxSpeed = 60},false);

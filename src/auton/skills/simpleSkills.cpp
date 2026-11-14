@@ -10,7 +10,7 @@ void simpleSkills() {
     float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
     float startY = -71 + centerToWall;
     toggleMotor.move(-127);
-    pros::delay(500);
+    pros::delay(450);
     toggleMotor.move(0);
     chassis.setPose(-60.5, startY, 90);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);

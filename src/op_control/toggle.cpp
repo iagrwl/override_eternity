@@ -1,8 +1,10 @@
 #include "main.h"
 
-void handleToggle() {
+static bool isToggleOn = false;
 
+void handleToggle() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-        toggleMotor.move_relative(-720, 200);
+        toggleMotor.move(isToggleOn ? -127 : 0);
+        isToggleOn = !isToggleOn;
     }
 }
