@@ -176,6 +176,7 @@ void runSelectedAuton() {
 }
 
 bool routineRunning() { return hw::routineRunning(); }
+void abortRoutine() { hw::abortRoutine(); }
 
 const Snapshot& snapshot() { return s_snap; }
 
@@ -497,12 +498,21 @@ void init(const std::vector<Auton>& list, const char* defaultAuton) {
     s_autons = list;
     s_initMs = hw::millis();
 
+    auto find = [&](const char* name) -> int {
+        for (size_t i = 0; name && i < s_autons.size(); i++)
+            if (strcmp(s_autons[i].name, name) == 0) return i;
+        return -1;
+    };
+    // SD card pick first, then the default from auton_list.cpp, then the first entry
     char saved[48];
-    const char* want = hw::loadSelection(saved, sizeof saved) ? saved : defaultAuton;
-    s_selected = s_autons.empty() ? -1 : 0;
-    for (size_t i = 0; want && i < s_autons.size(); i++) {
-        if (strcmp(s_autons[i].name, want) == 0) s_selected = i;
+    int sel = -1;
+    if (hw::loadSelection(saved, sizeof saved)) {
+        sel = find(saved);
+        if (sel < 0) log("saved auton '%s' is not in the list anymore", saved);
     }
+    if (sel < 0) sel = find(defaultAuton);
+    if (sel < 0 && !s_autons.empty()) sel = 0;
+    s_selected = sel;
     if (const Auton* a = selectedAuton()) log("auton loaded: %s", a->name);
 
     if (!s_timer) {

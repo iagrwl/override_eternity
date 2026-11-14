@@ -232,11 +232,13 @@ void opcontrol() {
 
 ## 7. Competition day checklist
 
-- [ ] **SD card is in the brain.** Without it, the brain forgets your auto pick when it restarts.
-- [ ] No red **⚠** badge in the top bar (all devices plugged in).
+- [ ] **SD card is in the brain.** Without it, the brain forgets your auto pick when it restarts (it falls back to the default at the bottom of `src/auton/auton_list.cpp`).
+- [ ] No red **⚠** badge in the top bar (all devices plugged in). Both distance sensors must work: the routes use them to re-find the walls.
 - [ ] Pick your auto on the **AUTON** tab **before** the match starts. The picker locks once the match is running.
-- [ ] The controller screen shows the auto you picked.
+- [ ] The controller screen shows `run: <auto>` with the one you picked (it re-prints when the field cable is plugged in).
+- [ ] For skills, pick the skills route. The comp switch / field runs it exactly like a match auto.
 - [ ] Battery is charged (top-right of the screen).
+- [ ] Don't start a **TEST RUN** once you're in the queue. If one is still running when the field cable goes in, the brain stops it, but let it finish before you line up.
 
 ---
 

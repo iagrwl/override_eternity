@@ -86,7 +86,7 @@ inline pros::MotorGroup lift({2, -9}, pros::MotorGearset::green);
 
 // intake
 inline pros::Motor claw(-1, pros::MotorGearset::green);
-inline pros::Motor toggleMotor(14, pros::MotorGearset::green);
+inline pros::Motor toggleMotor(14, pros::MotorGearset::green, pros::MotorUnits::degrees);
 
 
 // SENSORS

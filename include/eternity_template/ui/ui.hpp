@@ -37,6 +37,8 @@ const Auton* selectedAuton();
 // true while a routine started from the brain's TOOLS/AUTON page is running;
 // opcontrol should skip driver input while this is set
 bool routineRunning();
+// stop that routine (cancels every motion it starts until it runs out of steps)
+void abortRoutine();
 
 // show any number on a custom info tab: ui::publish("lift.target", 400), then put
 // "lift.target" as a widget's source in src/ui/layout.cpp (or pick it in sim edit mode)

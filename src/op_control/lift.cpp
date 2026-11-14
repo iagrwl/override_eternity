@@ -43,14 +43,18 @@ void liftPID() {
     const double kI = 0.0, kG = 2300.0, iMax = 1500.0;
 
     double integral = 0, prevError = 0;
+    bool wasOn = false;
     uint32_t now = pros::millis();
 
 
     while (true) {
         if (liftPidOn) {
-
-
             double error = liftTarget - liftAngle();
+            if (!wasOn) {
+                // just switched on: don't kick the lift with a stale derivative
+                prevError = error;
+                integral = 0;
+            }
             double derivative = (error - prevError) / 0.01;
             prevError = error;
 
@@ -67,6 +71,7 @@ void liftPID() {
             out = std::clamp(out, -12000.0, 12000.0);
             lift.move_voltage(out);
         }
+        wasOn = liftPidOn;
         pros::Task::delay_until(&now, 10);
     }
 }
