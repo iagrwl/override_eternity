@@ -9,6 +9,9 @@ void three_pin_C() {
     float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
     float startY = -71 + centerToWall;
     chassis.setPose(-60.5, startY, 90);
+    toggleMotor.move(-127);
+    pros::delay(500);
+    toggleMotor.move(0);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
@@ -53,12 +56,12 @@ void three_pin_C() {
     pros::delay(450);
     claw.move(127);
 
-    // chassis.moveToPoint(-35,-22,700,{.forwards=false});
-    chassis.moveToPoint(-30,-22,1000,{.forwards=false}, false);
+    chassis.moveToPoint(-25,-22,1000,{.forwards=false}, false);
     claw.move(-127);
-    chassis.turnToHeading(220,500);
-    chassis.moveToPose(-47,-50,210,2200,{.lead = 0.4,.maxSpeed=70,.minSpeed=50},false);
+    chassis.turnToHeading(215,500);
+    chassis.moveToPose(-46,-50,215,2200,{.lead = 0.4,.maxSpeed=65,.minSpeed=50},false);
     liftTarget = 40;
+
     chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
     chassis.moveToPoint(-46,-24,1200,{.maxSpeed = 60},false);
     liftTarget = 30;
@@ -71,7 +74,13 @@ void three_pin_C() {
 
 void three_pin_F() {
 // robot starts facing east (90), so its right side faces the bottom wall
-    chassis.setPose(0, -60.5, 0);
+    
+    float centerToWall = leftDistance.get() / 25.4 + LEFT_SENSOR_OFFSET;
+    float startX = -67.25 + centerToWall;
+    chassis.setPose(startX, -60.5, 0);
+    toggleMotor.move(-127);
+    pros::delay(350);
+    toggleMotor.move(0);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
@@ -80,7 +89,7 @@ void three_pin_F() {
     claw.move(-127);
     // chassis.moveToPoint(-60,startY,300);
     // chassis.turnToPoint(-46,-9.5, 750);
-    liftTarget = 8;
+    liftTarget = 13;
     // chassis.moveToPoint(-46,-9.5, 1000);
     // chassis.turnToHeading(180,400,{},false);
 
@@ -88,26 +97,27 @@ void three_pin_F() {
     chassis.moveToPoint(-28, -50, 800);
 
     // pros::delay(200);
-    // float yFromWall = -71 + (leftDistance.get() / 25.4 + LEFT_SENSOR_OFFSET);
+    float yFromWall = -71 + (leftDistance.get() / 25.4 + LEFT_SENSOR_OFFSET);
     // printf("wall reset: right dist %d mm -> x = %.2f (odom had %.2f)\n", (int)leftDistance.get(), yFromWall, chassis.getPose().y);
-    // chassis.setPose(chassis.getPose().x, yFromWall, chassis.getPose().theta);
+    double angleFromWall = 1.5 * M_PI - chassis.getPose(true).theta;
+    chassis.setPose(chassis.getPose().x, yFromWall * cos(angleFromWall), chassis.getPose().theta);
 
     // chassis.moveToPose(-47, -19.5, 180, 900, {.lead=0.3, .maxSpeed=50}, false);
     liftTarget = 0;
-    pros::delay(200);
+    pros::delay(250);
     claw.move(127);
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     
     pros::delay(500);
     
     chassis.moveToPoint(-8,-48, 750,{.forwards=false,.maxSpeed=80,.minSpeed=40},false);
-    chassis.turnToPoint(-20, -63, 750);
+    chassis.turnToPoint(-19, -60, 750);
     claw.move(-127);
-    chassis.moveToPoint(-19, -62, 1200, {.maxSpeed = 50, .minSpeed = 30, .earlyExitRange = 3}, false);
+    chassis.moveToPoint(-19, -60, 1200, {.maxSpeed = 50, .minSpeed = 30, .earlyExitRange = 3}, false);
     chassis.swingToHeading(-180, lemlib::DriveSide::LEFT, 750, {.minSpeed = 30});
     chassis.swingToHeading(-100, lemlib::DriveSide::LEFT, 750);
     pros::delay(300);
-    liftTarget = 20;
+    liftTarget = 25;
 
     chassis.moveToPoint(-5, -48, 1500, {.forwards = false, .minSpeed = 30, .earlyExitRange = 3});
     chassis.turnToPoint(-24, -48, 750, {.minSpeed = 20, .earlyExitRange = 20});
@@ -121,11 +131,11 @@ void three_pin_F() {
     chassis.turnToPoint(19, -62, 750);
     liftTarget = 0;
     claw.move(-127);
-    chassis.moveToPoint(20, -61, 1200, {.maxSpeed = 50, .minSpeed = 30, .earlyExitRange = 3}, false);
+    chassis.moveToPoint(20, -60, 1200, {.maxSpeed = 50, .minSpeed = 30, .earlyExitRange = 3}, false);
     chassis.swingToHeading(180, lemlib::DriveSide::RIGHT, 750, {.minSpeed = 30});
     chassis.swingToHeading(100, lemlib::DriveSide::RIGHT, 750, {.minSpeed = 30, .earlyExitRange = 20});
     pros::delay(100);
-    liftTarget = 25;
+    liftTarget = 30;
     chassis.moveToPoint(5, -48, 1500, {.forwards = false, .minSpeed = 40, .earlyExitRange = 3});
     chassis.turnToPoint(24, -48, 750, {.minSpeed = 20, .earlyExitRange = 20});
     chassis.moveToPoint(26, -48, 1000, {.maxSpeed = 60}, false);

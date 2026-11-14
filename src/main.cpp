@@ -40,8 +40,8 @@ void competition_initialize() {}
 
 void autonomous() {
     // ui::runSelectedAuton();
-    //three_pin_C();
-    simpleSkills();
+    three_pin_C();
+    // simpleSkills();
 }
 
 void opcontrol() {
