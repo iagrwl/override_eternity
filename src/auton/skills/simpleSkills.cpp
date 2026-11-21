@@ -58,7 +58,7 @@ void simpleSkills() {
     chassis.moveToPoint(-25,-22,1000,{.forwards=false}, false);
     claw.move(-127);
     chassis.turnToHeading(220,800);
-    chassis.moveToPose(-46,-50,220,2200,{.lead = 0.4,.maxSpeed=65,.minSpeed=50},false);
+    chassis.moveToPose(-50,-50,220,2200,{.lead = 0.4,.maxSpeed=65,.minSpeed=50},false);
     liftTarget = 40;
     pros::delay(500);
 
@@ -114,7 +114,7 @@ void simpleSkills() {
     printf("wall reset: left dist %d mm -> y = %.2f (odom had %.2f)\n", (int)leftDistance.get(), yFromWall2, chassis.getPose().y);
     chassis.setPose(chassis.getPose().x, yFromWall2, chassis.getPose().theta);
 
-    chassis.moveToPoint(-59, -60, 1000, {}, false);
+    chassis.moveToPoint(-60, -60, 1000, {}, false);
     pros::delay(500);
     chassis.moveToPoint(-44,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
     chassis.turnToHeading(0, 750, {.maxSpeed = 80}, false);
@@ -146,7 +146,7 @@ void simpleSkills() {
     printf("wall reset: left dist %d mm -> y = %.2f (odom had %.2f)\n", (int)leftDistance.get(), yFromWall4, chassis.getPose().y);
     chassis.setPose(chassis.getPose().x, yFromWall4, chassis.getPose().theta);
 
-    chassis.moveToPoint(-59, -60, 1000, {}, false);
+    chassis.moveToPoint(-60, -60, 1000, {}, false);
     pros::delay(500);
     chassis.moveToPoint(-50,-60,750, {.forwards = false, .maxSpeed = 80, .minSpeed = 40}, false);
     liftTarget = 30;
@@ -157,6 +157,10 @@ void simpleSkills() {
     pros::delay(900);
     claw.move(127);
     liftTarget = 30;
+
+    chassis.moveToPoint(-12, -12, 1000, {.forwards = false}, false);
+
+    liftTarget = 0;
     // chassis.moveToPoint(-10,0,1000,{.forwards=false,.maxSpeed=80},false);
     // claw.move(-127);
     // chassis.moveToPoint(24,24,1300,{.maxSpeed=80},false);
