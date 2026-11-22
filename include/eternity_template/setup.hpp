@@ -93,4 +93,6 @@ inline pros::Motor toggleMotor(14, pros::MotorGearset::green);
 inline pros::Distance leftDistance(11);
 inline pros::Distance rightDistance(19);
 
+
+inline pros::Optical toggleColor(17);
 inline pros::Rotation liftRot(-12);

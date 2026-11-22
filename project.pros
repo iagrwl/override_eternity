@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "50/50",
+    "project_name": "ayletsgo",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -341,7 +341,7 @@
     },
     "upload_options": {
       "description": "iloveeternity",
-      "icon": "alien",
+      "icon": "power",
       "slot": 1
     },
     "use_early_access": false
