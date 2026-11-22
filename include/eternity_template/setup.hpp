@@ -92,6 +92,7 @@ inline pros::Motor toggleMotor(14, pros::MotorGearset::green);
 // SENSORS
 inline pros::Distance leftDistance(11);
 inline pros::Distance rightDistance(19);
+inline pros::Distance frontDistance(16);
 
 
 inline pros::Optical toggleColor(17);
