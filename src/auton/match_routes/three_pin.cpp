@@ -48,9 +48,28 @@ void three_pin_C() {
 
     liftTarget = 20;
     // pros::delay(400);
-    chassis.turnToHeading(240,500,{.maxSpeed=80},false);
+    chassis.turnToHeading(265,750,{.maxSpeed=80},false);
     //drop off
-    chassis.moveToPoint(-40,-24,1100,{},false);
+    chassis.moveToPoint(-43,-22,1100,{},false);
+    
+    double wallDistLeft = leftDistance.get_distance() / 25.4; 
+    double wallDistFront = frontDistance.get_distance() / 24.4;
+
+    double heading = chassis.getPose(true).theta;
+    double theta = fabs(3 * M_PI / 2.0 - heading);
+    double offsetY = 4.6 * sin(heading) + 2 * cos(heading); // 4.6 is left-right distance from center, 2.0 is front back distance from center
+    double offsetX = 3.75 * sin(heading) + 4.25 * cos(heading);
+
+    chassis.setPose(-71 + wallDistFront * cos(theta) - offsetX, -71 + wallDistLeft * cos(theta) - offsetY, chassis.getPose().theta);
+
+    std::cout << "heading: " << chassis.getPose().theta << " newY: " << chassis.getPose().y 
+    << " theta: " << theta << 
+    " offsetY: " << offsetY << std::endl;
+
+    std::cout << "heading: " << chassis.getPose().theta << " newX: " << chassis.getPose().x 
+    << " theta: " << theta << 
+    " offsetX: " << offsetX << std::endl;
+
     liftTarget = 0;
     // chassis.moveToPoint()
     pros::delay(450);
@@ -59,7 +78,13 @@ void three_pin_C() {
     chassis.moveToPoint(-25,-22,1000,{.forwards=false}, false);
     claw.move(-127);
     chassis.turnToHeading(220,500);
-    chassis.moveToPose(-50,-50,220,2200,{.lead = 0.4,.maxSpeed=55,.minSpeed=40},false);
+    chassis.moveToPose(-50,-50,220,3000,{.lead = 0.4, .maxSpeed = 60},false);
+    
+    std::cout << "x: " << chassis.getPose().x
+              << " y: " << chassis.getPose().y
+              << " theta: " << chassis.getPose().theta
+              << std::endl;
+    
     liftTarget = 40;
 
     chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);

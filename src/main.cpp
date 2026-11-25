@@ -49,8 +49,8 @@ void competition_initialize() {
 }
 
 void autonomous() {
-   
-    ui::runSelectedAuton();
+    // ui::runSelectedAuton();
+    three_pin_C();
 }
 
 void opcontrol() {
@@ -71,7 +71,6 @@ void opcontrol() {
         manualLiftControl();
         handleClaw();
         handleToggle();
-
         pros::delay(20);
     }
 }

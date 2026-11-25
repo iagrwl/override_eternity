@@ -96,4 +96,4 @@ inline pros::Distance frontDistance(16);
 
 
 inline pros::Optical toggleColor(17);
-inline pros::Rotation liftRot(-12);
+inline pros::Rotation liftRot(14);
