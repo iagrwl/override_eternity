@@ -20,6 +20,12 @@ void initialize() {
     chassis.calibrate();
     pros::delay(500);
 
+    // Start with the calibrated LemLib pose. The active autonomous routine sets
+    // its field start pose afterward; MCL detects large pose resets and reseeds.
+    mclLocalizer.initializeFromChassis();
+    mclLocalizer.setMode(mcl::Mode::LOG_ONLY); // switch to CORRECT only after tuning
+    mclLocalizer.start();
+
     left_dt.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
     right_dt.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_COAST);
 
@@ -50,7 +56,7 @@ void competition_initialize() {
 
 void autonomous() {
     // ui::runSelectedAuton();
-    three_pin_C();
+    three_pin_F(true);
 }
 
 void opcontrol() {

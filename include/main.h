@@ -82,8 +82,8 @@ void opcontrol(void);
 #include "eternity_template/op_control/op_control.hpp"
 #include "eternity_template/auton/autons.hpp"
 #include "eternity_template/util/util.hpp"
+#include "eternity_template/util/mcl.hpp"
 
 #endif
 
 #endif  // _PROS_MAIN_H_
-    

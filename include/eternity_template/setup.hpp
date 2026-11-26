@@ -11,7 +11,7 @@ extern ui::Console console;
 inline pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // drivetrain (negative port = reversed)
-inline pros::MotorGroup left_dt({-3, 5, -4}, pros::MotorGearset::blue);
+inline pros::MotorGroup left_dt({-12, 5, -4}, pros::MotorGearset::blue);
 inline pros::MotorGroup right_dt({8, -6,7}, pros::MotorGearset::blue);
 
 inline lemlib::Drivetrain drivetrain(&left_dt,
@@ -86,14 +86,14 @@ inline pros::MotorGroup lift({2, -9}, pros::MotorGearset::green);
 
 // intake
 inline pros::Motor claw(-1, pros::MotorGearset::green);
-inline pros::Motor toggleMotor(14, pros::MotorGearset::green);
+inline pros::Motor toggleMotor(-3, pros::MotorGearset::green);
 
 
 // SENSORS
 inline pros::Distance leftDistance(11);
 inline pros::Distance rightDistance(19);
 inline pros::Distance frontDistance(16);
-
+inline pros::Distance backDistance(20);
 
 inline pros::Optical toggleColor(17);
 inline pros::Rotation liftRot(14);

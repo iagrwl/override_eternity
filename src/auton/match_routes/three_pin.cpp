@@ -4,14 +4,15 @@
 static const float LEFT_SENSOR_OFFSET = 5.5;
 static const float RIGHT_SENSOR_OFFSET = 5.5;
 
-void three_pin_C() {
+void three_pin_C(bool isRed) {
 // robot starts facing east (90), so its right side faces the bottom wall
     float centerToWall = rightDistance.get() / 25.4 + RIGHT_SENSOR_OFFSET;
     float startY = -71 + centerToWall;
     chassis.setPose(-60.5, startY, 90);
-    toggleMotor.move(-127);
-    pros::delay(500);
-    toggleMotor.move(0);
+
+    toggleColor.set_led_pwm(90);
+    toggleUntil(isRed ? "red" : "blue");
+
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
@@ -20,7 +21,7 @@ void three_pin_C() {
     claw.move(-127);
     // chassis.moveToPoint(-60,startY,300);
     // chassis.turnToPoint(-46,-9.5, 750);
-    liftTarget = 10;
+    liftTarget = 12;
     // chassis.moveToPoint(-46,-9.5, 1000);
     // chassis.turnToHeading(180,400,{},false);
 
@@ -58,7 +59,7 @@ void three_pin_C() {
     double heading = chassis.getPose(true).theta;
     double theta = fabs(3 * M_PI / 2.0 - heading);
     double offsetY = 4.6 * sin(heading) + 2 * cos(heading); // 4.6 is left-right distance from center, 2.0 is front back distance from center
-    double offsetX = 3.75 * sin(heading) + 4.25 * cos(heading);
+    double offsetX = 3 * sin(heading) + 4.25 * cos(heading);
 
     chassis.setPose(-71 + wallDistFront * cos(theta) - offsetX, -71 + wallDistLeft * cos(theta) - offsetY, chassis.getPose().theta);
 
@@ -68,17 +69,17 @@ void three_pin_C() {
 
     std::cout << "heading: " << chassis.getPose().theta << " newX: " << chassis.getPose().x 
     << " theta: " << theta << 
-    " offsetX: " << offsetX << std::endl;
+    " offsetX: " << offsetX << " walldist: " << wallDistFront -71 << std::endl;
 
     liftTarget = 0;
     // chassis.moveToPoint()
     pros::delay(450);
     claw.move(127);
 
-    chassis.moveToPoint(-25,-22,1000,{.forwards=false}, false);
+    chassis.moveToPoint(-24,-22,1000,{.forwards=false}, false);
     claw.move(-127);
     chassis.turnToHeading(220,500);
-    chassis.moveToPose(-50,-50,220,3000,{.lead = 0.4, .maxSpeed = 60},false);
+    chassis.moveToPose(-50,-51,220,3000,{.lead = 0.4, .maxSpeed = 50, .minSpeed = 20},false);
     
     std::cout << "x: " << chassis.getPose().x
               << " y: " << chassis.getPose().y
@@ -89,7 +90,7 @@ void three_pin_C() {
 
     chassis.turnToPoint(-46,-24,800,{.maxSpeed=80},false);
     chassis.moveToPoint(-46,-24,1200,{.maxSpeed = 60},false);
-    liftTarget = 30;
+    liftTarget = 20;
     pros::delay(500);
     claw.move(127);
     chassis.moveToPoint(-46,-50,1200,{.forwards=false, .minSpeed = 40, .earlyExitRange = 5});
@@ -97,15 +98,16 @@ void three_pin_C() {
     chassis.turnToHeading(270,750);
 }
 
-void three_pin_F() {
+void three_pin_F(bool isRed) {
 // robot starts facing east (90), so its right side faces the bottom wall
     
     float centerToWall = leftDistance.get() / 25.4 + LEFT_SENSOR_OFFSET;
     float startX = -67.25 + centerToWall;
     chassis.setPose(startX, -60.5, 0);
-    toggleMotor.move(-127);
-    pros::delay(350);
-    toggleMotor.move(0);
+
+    toggleColor.set_led_pwm(90);
+    toggleUntil(isRed ? "red" : "blue");
+
     printf("right dist: %d mm (%.2f in)\n", (int)rightDistance.get(), rightDistance.get() / 25.4);
     printf("starting pose: x = %.2f, y = %.2f, theta = %.2f\n", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);

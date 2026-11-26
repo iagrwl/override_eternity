@@ -12,8 +12,10 @@ const std::vector<ui::Auton> autonList = {
     {"dummy route", "6in forward route", ui::Alliance::Any, dummy, true, 0, 0, 0},
     {"simple skilly", "simple skill route", ui::Alliance::Skills, simpleSkills},
     {"advanced skilly", "advanced skill route", ui::Alliance::Skills, advancedSkills},
-    {"three pin C", "close side", ui::Alliance::Blue, three_pin_C},
-    {"three pin F", "far side", ui::Alliance::Blue, three_pin_F},
+    {"three pin C - Blue", "close side; sort blue", ui::Alliance::Blue, [] { three_pin_C(false); }},
+    {"three pin C - Red", "close side; sort red", ui::Alliance::Red, [] { three_pin_C(true); }},
+    {"three pin F - Blue", "far side; sort blue", ui::Alliance::Blue, [] { three_pin_F(false); }},
+    {"three pin F - Red", "far side; sort red", ui::Alliance::Red, [] { three_pin_F(true); }},
 };
 
 // picked when the SD card has no saved choice
